@@ -4,13 +4,13 @@ import { getShortUrl } from "@/dao/short_url.dao";
 import wrapAsync from "@/utils/tryCatchWrapper";
 
 export const createShortUrl = wrapAsync(async (c: Context) => {
-  const { url } = await c.req.json();
+  const data = await c.req.json();
   const user = c.get("user");
   let shortUrl: string;
   if (user) {
-    shortUrl = await createShortUrlWithUser(url, user._id);
+    shortUrl = await createShortUrlWithUser(data.url, user._id, data.slug);
   }else {
-    shortUrl = await createShortUrlWithoutUser(url, null, null);
+    shortUrl = await createShortUrlWithoutUser(data.url, null, data.slug);
   }
   c.status(200);
 
@@ -32,14 +32,4 @@ export const redirectFromShortUrl = wrapAsync(async (c: Context) => {
   }
 
   return c.redirect(url.full_url);
-});
-
-// slug = customurl
-
-export const createCustomShortUrl = wrapAsync(async (c: Context) => {
-  const { url, slug } = await c.req.json();
-
-  const shortUrl = await createShortUrlWithoutUser(url, null, slug);
-  c.status(200);
-  return c.text(process.env.APP_URL + shortUrl);
 });

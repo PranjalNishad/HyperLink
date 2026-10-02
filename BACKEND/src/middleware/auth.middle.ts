@@ -11,7 +11,7 @@ export const authMiddleware = async (c: any, next: any) => {
 
   try {
     const decoded = verifyToken(token);
-    const user = await findUserById(decoded as string);
+    const user = await findUserById(decoded.id);
 
     if (!user) {
       return c.json({ message: "Unauthorized" }, 401);

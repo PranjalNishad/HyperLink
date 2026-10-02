@@ -8,6 +8,7 @@ import auth_routes from "@/routes/auth.route";
 import { redirectFromShortUrl } from "@/controller/short_url.controller";
 import { errorHandler } from "./utils/errorHandler";
 import { cors } from "hono/cors";
+import { attachUser } from "@/utils/attactUser";
 
 const app = new Hono();
 
@@ -16,6 +17,8 @@ app.use("*", cors());
 connectDB();
 
 app.route("/api/auth", auth_routes);
+app.use(attachUser);
+// app.use(Hono.urlencoded({extended: true}));
 
 app.route("/api/create", short_url);
 
