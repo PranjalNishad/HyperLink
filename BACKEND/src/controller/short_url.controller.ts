@@ -25,7 +25,7 @@ export const createShortUrl = wrapAsync(async (c: Context) => {
   c.status(200);
 
 
-  return c.text(process.env.APP_URL + shortUrl);
+  return c.text(`${(process.env.APP_URL ?? "").replace(/\/+$/, "")}/${shortUrl}`);
 });
 
 export const redirectFromShortUrl = wrapAsync(async (c: Context) => {

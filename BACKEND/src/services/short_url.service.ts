@@ -109,7 +109,7 @@ const mapShortUrl = (doc: ShortUrlLean) => ({
   id: String(doc._id),
   destination: doc.full_url,
   slug: doc.short_url,
-  shortUrl: process.env.APP_URL + doc.short_url,
+  shortUrl: `${(process.env.APP_URL ?? "").replace(/\/+$/, "")}/${doc.short_url}`,
   clicks: doc.clicks ?? 0,
   createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : null,
 });
