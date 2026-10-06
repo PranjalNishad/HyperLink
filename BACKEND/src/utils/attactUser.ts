@@ -1,6 +1,6 @@
 import { getCookie } from "hono/cookie";
-import { findUserById } from "@/dao/user.dao";
-import { verifyToken } from "@/utils/helper";
+import { findUserById } from "../dao/user.dao";
+import { verifyToken } from "../utils/helper";
 
 export const attachUser = async (c: any, next: any) => {
   const token = getCookie(c, "accessToken");

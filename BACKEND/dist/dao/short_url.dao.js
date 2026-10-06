@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import urlSchema from "@/models/shorturl.model";
-import { generateNanoid } from "@/utils/helper";
-import { ConflictError, InternalServerError } from "@/utils/errorHandler";
+import urlSchema from "../models/shorturl.model";
+import { generateNanoid } from "../utils/helper";
+import { ConflictError, InternalServerError } from "../utils/errorHandler";
 export const saveShortUrl = async (longUrl, shortUrl, userId) => {
     try {
         const newUrl = new urlSchema({

@@ -1,14 +1,14 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import short_url from "@/routes/short_url.route";
-import url_routes from "@/routes/url.route";
-import auth_routes from "@/routes/auth.route";
-import { redirectFromShortUrl } from "@/controller/short_url.controller";
+import short_url from "./routes/short_url.route";
+import url_routes from "./routes/url.route";
+import auth_routes from "./routes/auth.route";
+import { redirectFromShortUrl } from "./controller/short_url.controller";
 import { errorHandler } from "./utils/errorHandler";
-import { attachUser } from "@/utils/attactUser";
-import { allowedOrigins } from "@/config/config";
-import connectDB from "@/config/mongo.config";
-import { rateLimit } from "@/middleware/rateLimit.middleware";
+import { attachUser } from "./utils/attactUser";
+import { allowedOrigins } from "./config/config";
+import connectDB from "./config/mongo.config";
+import { rateLimit } from "./middleware/rateLimit.middleware";
 const app = new Hono();
 // Baseline security headers for every API response.
 app.use("*", async (c, next) => {

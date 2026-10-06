@@ -1,19 +1,19 @@
 import type { Context } from "hono";
 import { setCookie, getCookie } from "hono/cookie";
-import wrapAsync from "@/utils/tryCatchWrapper";
+import wrapAsync from "../utils/tryCatchWrapper";
 import {
   registerUser,
   loginUser,
   refreshSession,
   logoutSession,
-} from "@/services/auth.service";
+} from "../services/auth.service";
 import {
   ACCESS_COOKIE,
   REFRESH_COOKIE,
   accessCookieOptions,
   refreshCookieOptions,
-} from "@/config/config";
-import { BadRequestError } from "@/utils/errorHandler";
+} from "../config/config";
+import { BadRequestError } from "../utils/errorHandler";
 
 const setAuthCookies = (c: Context, accessToken: string, refreshToken: string) => {
   setCookie(c, ACCESS_COOKIE, accessToken, accessCookieOptions);

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import connectDB from "@/config/mongo.config";
-import urlSchema from "@/models/shorturl.model";
+import connectDB from "../config/mongo.config";
+import urlSchema from "../models/shorturl.model";
 const run = async () => {
     await connectDB();
     const missingBefore = await urlSchema.collection.countDocuments({

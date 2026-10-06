@@ -1,10 +1,10 @@
 import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
-import { createUser, findUserByEmail, findUserById } from "@/dao/user.dao";
-import { createSession, deleteSessionByTokenHash, findSessionByTokenHash, } from "@/dao/session.dao";
-import { ConflictError, UnauthorizedError, BadRequestError } from "@/utils/errorHandler";
-import { signToken, generateRefreshToken, hashRefreshToken } from "@/utils/helper";
-import { REFRESH_TOKEN_TTL_SECONDS } from "@/config/config";
+import { createUser, findUserByEmail, findUserById } from "../dao/user.dao";
+import { createSession, deleteSessionByTokenHash, findSessionByTokenHash, } from "../dao/session.dao";
+import { ConflictError, UnauthorizedError, BadRequestError } from "../utils/errorHandler";
+import { signToken, generateRefreshToken, hashRefreshToken } from "../utils/helper";
+import { REFRESH_TOKEN_TTL_SECONDS } from "../config/config";
 const BCRYPT_ROUNDS = 10;
 const BCRYPT_HASH_PATTERN = /^\$2[aby]\$\d{2}\$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

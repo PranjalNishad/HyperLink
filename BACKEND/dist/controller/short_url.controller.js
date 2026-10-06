@@ -1,7 +1,7 @@
-import { createShortUrlWithUser, createShortUrlWithoutUser, getDashboardStats, getUserShortUrls, getAnalyticsOverview, getTopLinks, getLinkAnalytics, removeUserLink, } from "@/services/short_url.service";
-import { getShortUrl } from "@/dao/short_url.dao";
-import { UnauthorizedError, NotFoundError } from "@/utils/errorHandler";
-import wrapAsync from "@/utils/tryCatchWrapper";
+import { createShortUrlWithUser, createShortUrlWithoutUser, getDashboardStats, getUserShortUrls, getAnalyticsOverview, getTopLinks, getLinkAnalytics, removeUserLink, } from "../services/short_url.service";
+import { getShortUrl } from "../dao/short_url.dao";
+import { UnauthorizedError, NotFoundError } from "../utils/errorHandler";
+import wrapAsync from "../utils/tryCatchWrapper";
 export const createShortUrl = wrapAsync(async (c) => {
     const data = await c.req.json();
     const user = c.get("user");

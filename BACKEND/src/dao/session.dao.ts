@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Session from "@/models/session.model";
+import Session from "../models/session.model";
 
 export const createSession = async (
   userId: mongoose.Types.ObjectId | string,
