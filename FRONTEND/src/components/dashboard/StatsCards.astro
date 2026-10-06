@@ -1,62 +1,45 @@
 ---
 interface Stat {
+  key: "totalLinks" | "totalClicks" | "linksWithClicks";
   label: string;
-  value: string;
-  icon: string;
   accent: string;
+  icon: string;
 }
-
-interface Props {
-  /** Neutral values until the backend contract is connected. */
-  totalLinks?: number | null;
-  totalClicks?: number | null;
-  activeLinks?: number | null;
-  recentClicks?: number | null;
-}
-
-const { totalLinks = null, totalClicks = null, activeLinks = null, recentClicks = null } =
-  Astro.props;
 
 const stats: Stat[] = [
   {
+    key: "totalLinks",
     label: "Total Links",
-    value: totalLinks === null ? "--" : String(totalLinks),
     accent: "text-[var(--color-primary)]",
     icon: '<path d="M9.5 14.5 14.5 9.5" /><path d="M8 12.5 5.5 15a3 3 0 0 0 4.2 4.2L12 16.7" /><path d="M16 11.5l2.5-2.5a3 3 0 0 0-4.2-4.2L12 7.3" />',
   },
   {
+    key: "totalClicks",
     label: "Total Clicks",
-    value: totalClicks === null ? "--" : String(totalClicks),
     accent: "text-[var(--color-secondary)]",
     icon: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />',
   },
   {
-    label: "Active Links",
-    value: activeLinks === null ? "--" : String(activeLinks),
+    key: "linksWithClicks",
+    label: "Links With Clicks",
     accent: "text-[var(--color-success)]",
     icon: '<circle cx="12" cy="12" r="8" /><path d="m8.5 12 2.5 2.5 4.5-5" />',
-  },
-  {
-    label: "Recent Clicks",
-    value: recentClicks === null ? "--" : String(recentClicks),
-    accent: "text-[var(--color-accent)]",
-    icon: '<circle cx="12" cy="12" r="8" /><path d="M12 7v5l3.5 2" />',
   },
 ];
 ---
 
-<ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 xl:grid-cols-4">
+<ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
   {
     stats.map((stat) => (
       <li class="p-0">
-        <div class="rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-5">
+        <div class="premium-card p-5">
           <div class="flex items-center justify-between gap-3">
-            <span class="text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">
+            <span class="text-xs font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">
               {stat.label}
             </span>
             <span
               class:list={[
-                "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
+                "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
                 "bg-[var(--gradient-primary-soft)]",
                 stat.accent,
               ]}
@@ -74,11 +57,86 @@ const stats: Stat[] = [
               />
             </span>
           </div>
-          <p class="mt-3 m-0 font-mono text-2xl font-semibold tracking-tight text-[var(--color-text-primary)]">
-            {stat.value}
+          <p
+            class="mt-4 m-0 font-mono text-3xl font-semibold tracking-tight text-[var(--color-text-primary)]"
+            data-stat={stat.key}
+            aria-busy="true"
+          >
+            <span
+              class="inline-block h-7 w-14 animate-pulse rounded bg-[var(--color-surface-hover)]"
+              data-stat-skeleton
+              aria-hidden="true"
+            ></span>
           </p>
         </div>
       </li>
     ))
   }
 </ul>
+
+<p
+  id="stats-error"
+  class="m-0 mt-3 hidden text-sm text-[var(--color-danger)]"
+  role="alert"
+></p>
+
+<script>
+  import { getDashboardStats } from "@/api/user.api";
+  import { getAnalyticsOverview } from "@/api/analytics.api";
+  import { ApiError } from "@/api/client";
+
+  const errorEl = document.getElementById("stats-error");
+
+  function setValue(key: string, value: number) {
+    const el = document.querySelector<HTMLElement>(`[data-stat="${key}"]`);
+    if (!el) return;
+    el.textContent = String(value);
+    el.setAttribute("aria-busy", "false");
+  }
+
+  function setAllUnavailable() {
+    document.querySelectorAll<HTMLElement>("[data-stat]").forEach((el) => {
+      el.textContent = "—";
+      el.setAttribute("aria-busy", "false");
+    });
+  }
+
+  function showError(message: string) {
+    if (!errorEl) return;
+    errorEl.textContent = message;
+    errorEl.classList.remove("hidden");
+  }
+
+  async function load() {
+    try {
+      const [stats, overview] = await Promise.all([
+        getDashboardStats(),
+        getAnalyticsOverview().catch(() => null),
+      ]);
+      setValue("totalLinks", stats.totalLinks);
+      setValue("totalClicks", stats.totalClicks);
+      setValue("linksWithClicks", overview?.linksWithClicks ?? 0);
+    } catch (err) {
+      setAllUnavailable();
+
+      if (err instanceof ApiError && err.status === 401) {
+        window.dispatchEvent(new Event("nx:auth-required"));
+        return;
+      }
+
+      showError(
+        err instanceof Error ? err.message : "Could not load dashboard stats.",
+      );
+    }
+  }
+
+  // Refresh when a link is created or deleted from the dashboard.
+  window.addEventListener("nx:link-created", () => {
+    void load();
+  });
+  window.addEventListener("nx:link-deleted", () => {
+    void load();
+  });
+
+  load();
+</script>

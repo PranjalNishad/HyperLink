@@ -3,7 +3,7 @@ interface Props {
   /** Button style variant. */
   variant?: "primary" | "secondary" | "ghost" | "danger";
   /** Visual size. */
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   /** Native button type. */
   type?: "button" | "submit" | "reset";
   /** Disables interaction and dims the button. */
@@ -34,7 +34,7 @@ const {
 const variantClasses: Record<string, string> = {
   primary: [
     "text-[#0b0b10]",
-    "bg-[var(--gradient-primary)]",
+    "bg-[image:var(--gradient-primary)]",
     "shadow-[0_2px_20px_rgba(255,138,101,0.15)]",
     "hover:shadow-[0_6px_28px_rgba(255,138,101,0.28)]",
     "hover:brightness-105",
@@ -66,6 +66,7 @@ const sizeClasses: Record<string, string> = {
   sm: "h-8 px-3 text-xs gap-1.5",
   md: "h-10 px-4 text-sm gap-2",
   lg: "h-12 px-6 text-base gap-2",
+  xl: "h-[3.625rem] px-7 text-[1.0625rem] gap-2.5",
 };
 
 const baseClasses = [
@@ -73,7 +74,7 @@ const baseClasses = [
   "inline-flex",
   "items-center",
   "justify-center",
-  "rounded-lg",
+  "rounded-full",
   "font-medium",
   "whitespace-nowrap",
   "select-none",

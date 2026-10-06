@@ -2,39 +2,78 @@
 import Button from "@/components/common/Button.astro";
 ---
 
-<section class="relative overflow-hidden" id="hero">
-  <!-- Ambient glow orbs (subtle, non-animated) -->
-  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
-    <div class="bg-glow bg-glow-primary -top-32 left-1/2 -translate-x-[70%]" />
-    <div class="bg-glow bg-glow-secondary top-0 right-[-120px]" />
-    <div class="bg-glow bg-glow-accent top-24 left-[-140px] opacity-[0.08]" />
-  </div>
+<section
+  class="relative flex min-h-[100svh] items-center overflow-hidden pb-16 pt-28 md:pb-24 md:pt-32"
+  id="hero"
+>
+  <div
+    class="container-page relative grid w-full items-center gap-12 text-center lg:grid-cols-2 lg:gap-16 lg:text-left"
+  >
+    <!-- Left content -->
+    <div class="mx-auto flex w-full max-w-2xl flex-col items-center lg:mx-0 lg:max-w-none lg:items-start">
+      <div
+        class="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-background)] px-4 py-2 backdrop-blur-md"
+      >
+        <span class="h-2 w-2 rounded-full bg-[var(--color-primary)]" />
+        <span class="text-sm font-medium tracking-wide text-[var(--color-text-secondary)]">
+          Shorten &bull; Share &bull; Track
+        </span>
+      </div>
 
-  <div class="container-page relative flex flex-col items-center px-4 pb-16 pt-20 text-center sm:pt-24 md:pb-24 md:pt-32">
-    <h1
-      class="max-w-3xl text-[2.6rem] font-semibold leading-[1.08] tracking-tight text-[var(--color-text-primary)] sm:text-6xl md:text-7xl"
-    >
-      Short Links.
-      <br />
-      <span class="gradient-text">Big Possibilities.</span>
-    </h1>
+      <h1
+        class="mt-7 text-[clamp(3rem,12vw,4.5rem)] font-extrabold leading-[1.02] tracking-[-0.02em] text-[var(--color-text-primary)] lg:text-[clamp(4rem,5vw,5.5rem)] lg:leading-[0.98]"
+      >
+        Short Links.
+        <br />
+        <span class="gradient-text">Big Possibilities.</span>
+      </h1>
 
-    <p
-      class="mt-6 max-w-xl text-base leading-relaxed text-[var(--color-text-secondary)] sm:text-lg"
-    >
-      Create, manage, and analyze powerful short links from one simple
-      dashboard.
-    </p>
+      <p
+        class="mt-6 max-w-[38rem] text-lg leading-[1.6] text-[var(--color-text-secondary)] lg:text-[1.25rem]"
+      >
+        Turn long, messy URLs into short, shareable links and track their performance in real time.
+      </p>
 
-    <div
-      class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
-    >
-      <Button variant="primary" size="lg">
-        <a href="/signup" class="text-inherit no-underline">Start Shortening</a>
-      </Button>
-      <Button variant="secondary" size="lg">
-        <a href="#features" class="text-inherit no-underline">Explore Features</a>
-      </Button>
+      <div class="mt-9 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:justify-center lg:justify-start">
+        <Button variant="primary" size="xl" class="w-full sm:w-auto">
+          <a href="/signup" data-auth-href class="inline-flex items-center gap-2 text-inherit no-underline">
+            Get Started Free
+            <svg viewBox="0 0 16 16" class="h-[1.1em] w-[1.1em]" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" />
+            </svg>
+          </a>
+        </Button>
+        <Button variant="secondary" size="xl" class="w-full sm:w-auto">
+          <a href="#features" class="text-inherit no-underline">Learn More</a>
+        </Button>
+      </div>
+
+      <ul class="mt-9 flex flex-wrap items-center justify-center gap-x-7 gap-y-2.5 lg:justify-start">
+        <li class="flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)]">
+          <svg viewBox="0 0 16 16" class="h-[1.1em] w-[1.1em] text-[var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 8.5 6.5 12 13 4.5" />
+          </svg>
+          Free forever
+        </li>
+        <li class="flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)]">
+          <svg viewBox="0 0 16 16" class="h-[1.1em] w-[1.1em] text-[var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 8.5 6.5 12 13 4.5" />
+          </svg>
+          Real-time analytics
+        </li>
+        <li class="flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)]">
+          <svg viewBox="0 0 16 16" class="h-[1.1em] w-[1.1em] text-[var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 8.5 6.5 12 13 4.5" />
+          </svg>
+          No credit card required
+        </li>
+      </ul>
+    </div>
+
+    <!-- Right card -->
+    <div class="relative w-full">
+      <div class="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] bg-[radial-gradient(circle_at_30%_20%,rgba(255,138,101,0.25),transparent_60%),radial-gradient(circle_at_75%_80%,rgba(192,132,252,0.28),transparent_60%)] blur-2xl" aria-hidden="true"></div>
+      <slot />
     </div>
   </div>
 </section>

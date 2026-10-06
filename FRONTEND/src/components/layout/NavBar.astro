@@ -1,110 +1,142 @@
 ---
+import ThemeToggle from "@/components/common/ThemeToggle.astro";
+
 const links = [
   { href: "#features", label: "Features" },
   { href: "#analytics", label: "Analytics" },
   { href: "#how-it-works", label: "How it works" },
-  { href: "/login", label: "Login" },
 ];
 ---
 
-<header class="sticky top-0 z-50 border-b border-[var(--color-border-soft)] bg-[var(--color-background)]/70 backdrop-blur-xl">
+<header class="fixed inset-x-0 top-3 z-50 px-3 sm:px-4">
   <nav
-    class="container-page flex h-16 items-center justify-between gap-4"
+    class="nav-shell container-page flex h-14 items-center justify-between gap-4 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-background-strong)] px-4 shadow-[var(--shadow-md)] backdrop-blur-2xl md:px-5"
     aria-label="Main"
   >
     <!-- Brand -->
     <a
       href="/"
-      class="flex items-center gap-2 text-[var(--color-text-primary)]"
-      aria-label="NexURL home"
+      class="flex shrink-0 items-center gap-2 text-[var(--color-text-primary)]"
+      aria-label="HyperLink home"
     >
       <span
-        class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--gradient-primary)] text-sm font-bold text-[#0b0b10]"
+        class="flex h-8 w-8 items-center justify-center rounded-full bg-[image:var(--gradient-primary)] text-sm font-bold text-[#0b0b10] shadow-[0_2px_16px_rgba(255,138,101,0.35)]"
         aria-hidden="true"
       >
         N
       </span>
       <span class="text-lg font-semibold tracking-tight">
-        <span class="font-light">Nex</span>
-        <span class="gradient-text font-semibold">URL</span>
+        <span class="font-light">Hyper</span>
+        <span class="gradient-text font-semibold">Link</span>
       </span>
     </a>
 
-    <!-- Desktop links -->
+    <!-- Desktop links + actions -->
     <div class="hidden items-center gap-1 md:flex">
       {
         links.map((link) => (
           <a
             href={link.href}
-            class:list={[
-              "rounded-lg",
-              "px-3",
-              "py-2",
-              "text-sm",
-              "font-medium",
-              "text-[var(--color-text-muted)]",
-              "transition-colors",
-              "duration-200",
-              "hover:text-[var(--color-text-primary)]",
-              "focus-visible:outline-none",
-              "focus-visible:ring-2",
-              "focus-visible:ring-[var(--color-border-active)]",
-              link.href === "/login" && "text-[var(--color-text-secondary)]",
-            ]}
-          >
-            {link.label}
-          </a>
-        ))
-      }
-      <a href="/signup" class="ml-2 inline-flex h-9 items-center rounded-lg bg-[var(--gradient-primary)] px-4 text-sm font-semibold text-[#0b0b10] shadow-[0_2px_20px_rgba(255,138,101,0.15)] transition-all duration-200 hover:brightness-105 hover:shadow-[0_6px_28px_rgba(255,138,101,0.28)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]">
-        Get Started
-      </a>
-    </div>
-
-    <!-- Mobile menu toggle -->
-    <button
-      type="button"
-      class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)] md:hidden"
-      data-nav-toggle
-      aria-expanded="false"
-      aria-controls="mobile-menu"
-      aria-label="Toggle menu"
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="h-5 w-5" aria-hidden="true">
-        <path d="M4 7h16M4 12h16M4 17h16" data-nav-icon-open />
-        <path d="M6 6l12 12M18 6L6 18" data-nav-icon-close class="hidden" />
-      </svg>
-    </button>
-  </nav>
-
-  <!-- Mobile menu -->
-  <div
-    id="mobile-menu"
-    data-nav-menu
-    class="hidden border-t border-[var(--color-border-soft)] bg-[var(--color-background)]/95 px-4 pb-4 pt-2 backdrop-blur-xl md:hidden"
-  >
-    <div class="flex flex-col gap-1">
-      {
-        links.map((link) => (
-          <a
-            href={link.href}
-            class="rounded-lg px-3 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-text-primary)]"
+            class="rounded-full px-3 py-1.5 text-sm font-medium text-[var(--color-text-muted)] transition-colors duration-200 hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
           >
             {link.label}
           </a>
         ))
       }
       <a
+        href="/login"
+        data-guest-only
+        class="rounded-full px-3 py-1.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-200 hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+      >
+        Login
+      </a>
+
+      <span class="mx-1 h-5 w-px bg-[var(--color-border)]" aria-hidden="true"></span>
+
+      <ThemeToggle />
+
+      <a
         href="/signup"
-        class="mt-2 inline-flex h-10 items-center justify-center rounded-lg bg-[var(--gradient-primary)] text-sm font-semibold text-[#0b0b10]"
+        data-guest-only
+        class="ml-1 inline-flex h-9 items-center rounded-full bg-[image:var(--gradient-primary)] px-5 text-sm font-semibold text-[#0b0b10] shadow-[0_2px_24px_rgba(255,138,101,0.28)] transition-all duration-200 hover:brightness-105 hover:shadow-[0_6px_32px_rgba(255,138,101,0.38)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
       >
         Get Started
       </a>
+      <a
+        href="/dashboard"
+        data-auth-only
+        style="display:none"
+        class="ml-1 inline-flex h-9 items-center rounded-full bg-[image:var(--gradient-primary)] px-5 text-sm font-semibold text-[#0b0b10] shadow-[0_2px_24px_rgba(255,138,101,0.28)] transition-all duration-200 hover:brightness-105 hover:shadow-[0_6px_32px_rgba(255,138,101,0.38)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+      >
+        Dashboard
+      </a>
     </div>
+
+    <!-- Mobile actions -->
+    <div class="flex items-center gap-2 md:hidden">
+      <ThemeToggle />
+      <button
+        type="button"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-background)] text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Toggle menu"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="h-5 w-5" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" data-nav-icon-open />
+          <path d="M6 6l12 12M18 6L6 18" data-nav-icon-close class="hidden" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div
+    id="mobile-menu"
+    data-nav-menu
+    class="container-page mt-2 hidden flex-col gap-1 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-background-strong)] p-3 backdrop-blur-2xl md:hidden"
+  >
+    {
+      links.map((link) => (
+        <a
+          href={link.href}
+          class="rounded-xl px-3 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-text-primary)]"
+        >
+          {link.label}
+        </a>
+      ))
+    }
+    <a
+      href="/login"
+      data-guest-only
+      class="rounded-xl px-3 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-text-primary)]"
+    >
+      Login
+    </a>
+    <a
+      href="/signup"
+      data-guest-only
+      class="mt-1 inline-flex h-10 items-center justify-center rounded-full bg-[image:var(--gradient-primary)] text-sm font-semibold text-[#0b0b10]"
+    >
+      Get Started
+    </a>
+    <a
+      href="/dashboard"
+      data-auth-only
+      style="display:none"
+      class="mt-1 inline-flex h-10 items-center justify-center rounded-full bg-[image:var(--gradient-primary)] text-sm font-semibold text-[#0b0b10]"
+    >
+      Dashboard
+    </a>
   </div>
 </header>
 
 <script>
+  import { initAuthState } from "@/utils/authState";
+
+  initAuthState();
+
   const toggle = document.querySelector("[data-nav-toggle]");
   const menu = document.querySelector("[data-nav-menu]");
   const iconOpen = document.querySelector("[data-nav-icon-open]");
@@ -112,6 +144,7 @@ const links = [
 
   function closeMenu() {
     menu?.classList.add("hidden");
+    menu?.classList.remove("flex");
     toggle?.setAttribute("aria-expanded", "false");
     iconOpen?.classList.remove("hidden");
     iconClose?.classList.add("hidden");
@@ -121,6 +154,7 @@ const links = [
     const isHidden = menu?.classList.contains("hidden");
     if (isHidden) {
       menu?.classList.remove("hidden");
+      menu?.classList.add("flex");
       toggle?.setAttribute("aria-expanded", "true");
       iconOpen?.classList.add("hidden");
       iconClose?.classList.remove("hidden");

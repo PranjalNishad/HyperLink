@@ -1,21 +1,52 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import LoginForm from "@/components/auth/LoginForm.astro";
+import ThemeToggle from "@/components/common/ThemeToggle.astro";
 ---
 
 <Layout
-  title="Sign in — NexURL"
-  description="Sign in to your NexURL account."
+  title="Sign in — HyperLink"
+  description="Sign in to your HyperLink account."
+  stars={14}
 >
-  <main class="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
-    <!-- Ambient background glows -->
-    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
-      <div class="bg-glow bg-glow-primary -top-24 left-1/2 -translate-x-[80%]" />
-      <div class="bg-glow bg-glow-secondary -bottom-32 right-[-80px]" />
+  <main class="relative flex min-h-screen items-stretch">
+    <div class="absolute right-4 top-4 z-20">
+      <ThemeToggle />
     </div>
 
-    <div class="relative w-full max-w-md">
-      <LoginForm />
+    <!-- Form panel -->
+    <div class="relative flex w-full items-center justify-center px-4 py-10 lg:w-1/2">
+      <div class="relative w-full max-w-md rounded-[26px] border border-[var(--glass-border)] bg-[var(--glass-panel)] p-8 shadow-[var(--shadow-lg)] backdrop-blur-2xl">
+        <LoginForm />
+      </div>
+    </div>
+
+    <!-- Decorative panel -->
+    <div class="relative hidden w-1/2 items-center justify-center lg:flex">
+      <div class="relative mx-6 max-w-lg rounded-[2rem] border border-[var(--glass-border)] bg-[var(--glass-panel)] p-12 backdrop-blur-2xl">
+        <span class="text-xs font-semibold uppercase tracking-widest text-[var(--color-primary)]">Welcome Back</span>
+        <h1 class="mt-4 text-4xl font-bold leading-[1.1] tracking-tight text-[var(--color-text-primary)]">
+          Small Links. <span class="gradient-text">Big Stories.</span>
+        </h1>
+        <p class="mt-4 max-w-sm text-base leading-relaxed text-[var(--color-text-muted)]">
+          Sign in to manage your links, track performance, and keep everything organized in one place.
+        </p>
+
+        <ul class="mt-8 flex flex-col gap-3">
+          <li class="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+            <svg viewBox="0 0 16 16" class="h-4 w-4 text-[var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" /></svg>
+            Track every click in real time
+          </li>
+          <li class="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+            <svg viewBox="0 0 16 16" class="h-4 w-4 text-[var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" /></svg>
+            Manage all your links in one place
+          </li>
+          <li class="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+            <svg viewBox="0 0 16 16" class="h-4 w-4 text-[var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" /></svg>
+            Custom, memorable short links
+          </li>
+        </ul>
+      </div>
     </div>
   </main>
 </Layout>

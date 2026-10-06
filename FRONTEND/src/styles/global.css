@@ -1,24 +1,68 @@
 @import "tailwindcss";
 
 /* =========================================================
-   NEXURL DESIGN TOKENS
+   FONT — NORD
+   ---------------------------------------------------------
+   The design uses the "Nord" typeface everywhere via
+   --font-primary. Nord is not bundled with this project, so
+   the stack falls back to Inter / system-ui when it is not
+   installed on the device.
+
+   To self-host Nord, drop the font files into
+   `FRONTEND/public/fonts/` and uncomment the @font-face
+   blocks below (adjust the file names/weights to match the
+   licensed files you have). No other change is required — the
+   whole UI picks the family up through --font-primary.
+   ---------------------------------------------------------
+@font-face {
+  font-family: "Nord";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Nord-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Nord";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/Nord-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Nord";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Nord-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Nord";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/fonts/Nord-ExtraBold.woff2") format("woff2");
+}
+*/
+
+/* =========================================================
+   HYPERLINK DESIGN TOKENS
    ========================================================= */
 
 :root {
   /* -------------------------
      Background
      ------------------------- */
-  --color-background: #08080d;
-  --color-background-soft: #0b0b11;
-  --color-background-muted: #0f0f16;
+  --color-background: #06060a;
+  --color-background-soft: #0a0a10;
+  --color-background-muted: #0e0e14;
 
   /* -------------------------
      Surfaces / Cards
      ------------------------- */
-  --color-surface: #111118;
-  --color-surface-soft: #14141c;
-  --color-surface-hover: #181820;
-  --color-surface-elevated: #1a1a23;
+  --color-surface: #11111a;
+  --color-surface-soft: #151520;
+  --color-surface-hover: #1b1b26;
+  --color-surface-elevated: #1f1f2b;
 
   /* -------------------------
      Text
@@ -98,11 +142,45 @@
      ------------------------- */
   --glass-background: rgba(255, 255, 255, 0.04);
   --glass-background-hover: rgba(255, 255, 255, 0.06);
+  --glass-background-strong: rgba(15, 16, 27, 0.72);
+  --glass-panel: rgba(20, 21, 34, 0.55);
 
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-border-hover: rgba(255, 255, 255, 0.14);
 
   --glass-blur: 20px;
+
+  /* Modal (dialog) surfaces */
+  --modal-surface: rgba(20, 20, 29, 0.96);
+  --modal-border: rgba(255, 255, 255, 0.1);
+  --modal-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  --modal-backdrop: rgba(0, 0, 0, 0.65);
+
+  /* -------------------------
+     Cosmic environment
+     ------------------------- */
+  --cosmic-base-1: #080a12;
+  --cosmic-base-2: #0b0c15;
+  --cosmic-base-3: #151020;
+
+  --cosmic-orange: #ff7a59;
+  --cosmic-coral: #ff5f7e;
+  --cosmic-pink: #d23cff;
+  --cosmic-purple: #a855f7;
+
+  --cosmic-glow-1: rgba(255, 115, 100, 0.28);
+  --cosmic-glow-2: rgba(210, 60, 255, 0.18);
+  --cosmic-glow-3: rgba(255, 130, 100, 0.22);
+
+  --cosmic-planet-a: rgba(255, 122, 89, 0.55);
+  --cosmic-planet-b: rgba(210, 60, 255, 0.5);
+
+  --cosmic-trail-a: #ff8a65;
+  --cosmic-trail-b: #f472b6;
+  --cosmic-trail-c: #c084fc;
+
+  --cosmic-trail-opacity: 0.55;
+  --cosmic-star: rgba(255, 244, 240, 0.75);
 
   /* -------------------------
      Shadows
@@ -140,14 +218,20 @@
   /* -------------------------
      Typography
      ------------------------- */
-  --font-sans:
-    Inter,
+  /* Single source of truth for the product typeface. "Nord" is used first
+     (self-hosted files, or a locally installed copy), then a modern sans
+     fallback so the UI never drops to a browser default. */
+  --font-primary:
+    "Nord",
+    "Inter",
     ui-sans-serif,
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
+
+  --font-sans: var(--font-primary);
 
   --font-mono:
     "JetBrains Mono",
@@ -168,6 +252,7 @@
 html {
   scroll-behavior: smooth;
   background: var(--color-background);
+  font-family: var(--font-primary);
 }
 
 body {
@@ -177,10 +262,23 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
 
-  font-family: var(--font-sans);
+  font-family: var(--font-primary);
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Form controls do not inherit fonts by default — force the product typeface
+   everywhere so buttons, inputs, textareas and selects match the UI. */
+button,
+input,
+textarea,
+select,
+optgroup {
+  font: inherit;
+  letter-spacing: inherit;
 }
 
 
@@ -389,6 +487,78 @@ body {
 
 
 /* =========================================================
+   PREMIUM CARD
+   ========================================================= */
+
+.surface-glass {
+  background: var(--glass-background);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-lg);
+}
+
+.surface-glass:hover {
+  background: var(--glass-background-hover);
+  border-color: var(--glass-border-hover);
+}
+
+.premium-card {
+  background: var(--glass-panel);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.premium-card:hover {
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.icon-gradient {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-md);
+  background: var(--gradient-primary-soft);
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   HERO GLOW BACKGROUNDS
+   ========================================================= */
+
+.hero-glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 9999px;
+  filter: blur(100px);
+  opacity: 0.22;
+}
+
+.hero-glow-primary {
+  background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
+}
+
+.hero-glow-secondary {
+  background: radial-gradient(circle, var(--color-secondary) 0%, transparent 70%);
+}
+
+.hero-glow-accent {
+  background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+}
+
+/* =========================================================
    RESPONSIVE PAGE CONTAINER
    ========================================================= */
 
@@ -400,5 +570,230 @@ body {
 @media (max-width: 640px) {
   .container-page {
     width: min(100% - 2rem, 1200px);
+  }
+}
+
+
+/* =========================================================
+   LIGHT THEME
+   ========================================================= */
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-background: #faf9fc;
+  --color-background-soft: #f7f6fb;
+  --color-background-muted: #f2f1f8;
+
+  --color-surface: #ffffff;
+  --color-surface-soft: #fbfaff;
+  --color-surface-hover: #f2f0fa;
+  --color-surface-elevated: #ffffff;
+
+  --color-foreground: #17151d;
+  --color-text-primary: #17151d;
+  --color-text-secondary: #5f5a68;
+  --color-text-muted: #8c8794;
+  --color-text-subtle: #a8a3b0;
+
+  --color-border: rgba(24, 18, 44, 0.10);
+  --color-border-soft: rgba(24, 18, 44, 0.07);
+  --color-border-hover: rgba(24, 18, 44, 0.16);
+  --color-border-active: rgba(255, 138, 101, 0.5);
+
+  --glass-background: rgba(255, 255, 255, 0.66);
+  --glass-background-hover: rgba(255, 255, 255, 0.85);
+  --glass-background-strong: rgba(255, 255, 255, 0.76);
+  --glass-panel: rgba(255, 255, 255, 0.62);
+
+  --glass-border: rgba(30, 20, 50, 0.10);
+  --glass-border-hover: rgba(30, 20, 50, 0.18);
+
+  --modal-surface: rgba(255, 255, 255, 0.96);
+  --modal-border: rgba(24, 18, 44, 0.1);
+  --modal-shadow: 0 30px 80px rgba(40, 20, 70, 0.2);
+  --modal-backdrop: rgba(15, 12, 20, 0.45);
+
+  --shadow-sm: 0 2px 10px rgba(40, 20, 70, 0.06);
+  --shadow-md: 0 12px 34px rgba(40, 20, 70, 0.1);
+  --shadow-lg: 0 25px 80px rgba(40, 20, 70, 0.12);
+  --shadow-glow: 0 0 60px rgba(192, 132, 252, 0.16);
+  --shadow-primary: 0 0 40px rgba(255, 138, 101, 0.22);
+
+  --cosmic-base-1: #faf9fc;
+  --cosmic-base-2: #f8f7fb;
+  --cosmic-base-3: #fff9f7;
+
+  --cosmic-glow-1: rgba(255, 150, 120, 0.22);
+  --cosmic-glow-2: rgba(190, 140, 255, 0.18);
+  --cosmic-glow-3: rgba(255, 160, 130, 0.18);
+
+  --cosmic-planet-a: rgba(255, 170, 140, 0.4);
+  --cosmic-planet-b: rgba(200, 150, 255, 0.36);
+
+  --cosmic-trail-a: #ffb38a;
+  --cosmic-trail-b: #f9a8d4;
+  --cosmic-trail-c: #c4b5fd;
+
+  --cosmic-trail-opacity: 0.5;
+  --cosmic-star: rgba(170, 120, 210, 0.55);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  transition:
+    background-color 250ms ease,
+    color 250ms ease;
+}
+
+.premium-card,
+.surface-glass,
+.glass,
+.nav-shell,
+aside,
+input,
+button {
+  transition:
+    background-color 250ms ease,
+    border-color 250ms ease,
+    color 250ms ease,
+    box-shadow 250ms ease;
+}
+
+
+/* =========================================================
+   COSMIC BACKGROUND
+   ========================================================= */
+
+.cosmic-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cosmic-base {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 85% at 50% -10%, var(--cosmic-base-3) 0%, transparent 58%),
+    linear-gradient(165deg, var(--cosmic-base-1) 0%, var(--cosmic-base-2) 45%, var(--cosmic-base-3) 100%);
+}
+
+.cosmic-glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+}
+
+.cosmic-glow-1 {
+  top: -12%;
+  right: -8%;
+  width: min(62vw, 820px);
+  height: min(62vw, 820px);
+  background: radial-gradient(circle, var(--cosmic-glow-1), transparent 65%);
+}
+
+.cosmic-glow-2 {
+  top: 32%;
+  left: 28%;
+  width: min(52vw, 680px);
+  height: min(52vw, 680px);
+  background: radial-gradient(circle, var(--cosmic-glow-2), transparent 65%);
+}
+
+.cosmic-glow-3 {
+  bottom: -14%;
+  left: -12%;
+  width: min(56vw, 720px);
+  height: min(56vw, 720px);
+  background: radial-gradient(circle, var(--cosmic-glow-3), transparent 65%);
+}
+
+.cosmic-planet {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(3px);
+}
+
+.cosmic-planet-tr {
+  top: -20vh;
+  right: -15vw;
+  width: min(46vw, 640px);
+  height: min(46vw, 640px);
+  background: radial-gradient(
+    circle at 32% 30%,
+    rgba(255, 212, 196, 0.9),
+    var(--cosmic-planet-a) 36%,
+    rgba(210, 60, 255, 0.22) 62%,
+    transparent 74%
+  );
+  box-shadow: 0 0 160px 50px var(--cosmic-planet-a);
+}
+
+.cosmic-planet-bl {
+  bottom: -24vh;
+  left: -16vw;
+  width: min(42vw, 600px);
+  height: min(42vw, 600px);
+  background: radial-gradient(
+    circle at 62% 42%,
+    rgba(222, 160, 255, 0.85),
+    var(--cosmic-planet-b) 38%,
+    transparent 72%
+  );
+  box-shadow: 0 0 150px 46px var(--cosmic-planet-b);
+}
+
+.cosmic-trails {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: var(--cosmic-trail-opacity);
+}
+
+.cosmic-stars {
+  position: absolute;
+  inset: 0;
+}
+
+.cosmic-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 9999px;
+  background: var(--cosmic-star);
+  box-shadow: 0 0 7px 1px var(--cosmic-star);
+}
+
+.cosmic-star-lg {
+  width: 3px;
+  height: 3px;
+}
+
+@media (max-width: 640px) {
+  .cosmic-planet-tr,
+  .cosmic-planet-bl {
+    filter: blur(6px);
+    opacity: 0.75;
+  }
+  .cosmic-glow {
+    filter: blur(70px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body,
+  .premium-card,
+  .surface-glass,
+  .glass {
+    transition: none;
   }
 }

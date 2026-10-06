@@ -1,0 +1,229 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Sidebar from "@/components/layout/Sidebar.astro";
+import AnalyticsStats from "@/components/analytics/AnalyticsStats.astro";
+import LinkDetails from "@/components/analytics/LinkDetails.astro";
+---
+
+<Layout
+  title="Analytics — HyperLink"
+  description="Cumulative click analytics for your short links."
+>
+  <div class="flex min-h-screen flex-col lg:flex-row">
+    <Sidebar active="analytics" />
+
+    <div class="min-w-0 flex-1">
+      <main class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 class="m-0 text-2xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-3xl">
+              Analytics
+            </h1>
+            <p class="mt-1 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
+              Cumulative performance for your short links.
+            </p>
+          </div>
+        </div>
+
+        <!-- Auth required state -->
+        <div
+          id="analytics-auth"
+          class="mt-6 hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
+          role="status"
+        >
+          <p class="m-0 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+            You are not signed in, or your session has expired. Please
+            <a
+              href="/login"
+              class="font-medium text-[var(--color-primary)] transition-colors duration-200 hover:text-[var(--color-primary-light)]"
+              >log in</a
+            >
+            to view your analytics.
+          </p>
+        </div>
+
+        <!-- Overview -->
+        <div class="mt-8">
+          <AnalyticsStats />
+        </div>
+
+        <!-- Top links + link details -->
+        <div class="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <section id="top-links" class="scroll-mt-24">
+            <div class="mb-4 flex items-center justify-between">
+              <h2 class="m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]">
+                Top Links
+              </h2>
+            </div>
+
+            <div
+              id="top-links-loading"
+              class="rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-6 py-10 text-center"
+            >
+              <p class="m-0 text-sm text-[var(--color-text-muted)]" role="status">Loading your links&hellip;</p>
+            </div>
+
+            <div
+              id="top-links-error"
+              class="hidden rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-6 py-10 text-center"
+            >
+              <p
+                id="top-links-error-message"
+                class="m-0 text-sm text-[var(--color-danger)]"
+                role="alert"
+              ></p>
+            </div>
+
+            <div
+              id="top-links-empty"
+              class="hidden rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-6 py-10 text-center"
+            >
+              <p class="m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
+                No links yet. Create a short link to see analytics here.
+              </p>
+            </div>
+
+            <ul id="top-links-list" class="hidden list-none flex-col gap-3 p-0"></ul>
+          </section>
+
+          <LinkDetails />
+        </div>
+
+        <p class="mt-8 m-0 text-xs leading-relaxed text-[var(--color-text-muted)]">
+          Historical click trends are not implemented because individual click timestamps are not stored — only
+          cumulative click totals are shown.
+        </p>
+      </main>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { getTopLinks } from "@/api/analytics.api";
+  import { ApiError } from "@/api/client";
+  import type { TopLink } from "@/types/analytics";
+
+  const TOP_LIMIT = 10;
+
+  const loadingEl = document.getElementById("top-links-loading");
+  const errorEl = document.getElementById("top-links-error");
+  const errorMessageEl = document.getElementById("top-links-error-message");
+  const emptyEl = document.getElementById("top-links-empty");
+  const listEl = document.getElementById("top-links-list");
+
+  function formatDate(iso: string): string {
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return "—";
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  function hideStates() {
+    loadingEl?.classList.add("hidden");
+    errorEl?.classList.add("hidden");
+    emptyEl?.classList.add("hidden");
+    listEl?.classList.add("hidden");
+    listEl?.classList.remove("flex");
+  }
+
+  function buildRow(link: TopLink): HTMLLIElement {
+    const li = document.createElement("li");
+    li.className = "p-0";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.linkId = link.id;
+    button.className =
+      "group w-full rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-4 text-left transition-all duration-200 hover:border-[var(--color-border-hover)] hover:bg-[var(--glass-background-hover)] hover:shadow-[var(--shadow-glow)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]";
+
+    const top = document.createElement("div");
+    top.className = "flex items-center justify-between gap-3";
+    const short = document.createElement("span");
+    short.className = "truncate text-sm font-medium text-[var(--color-primary)] group-hover:text-[var(--color-primary-light)]";
+    short.textContent = link.shortUrl;
+    const clicks = document.createElement("span");
+    clicks.className = "shrink-0 rounded-full bg-[var(--glass-background)] px-2 py-0.5 font-mono text-xs text-[var(--color-text-secondary)]";
+    clicks.textContent = `${link.clicks} ${link.clicks === 1 ? "click" : "clicks"}`;
+    top.append(short, clicks);
+
+    const bottom = document.createElement("div");
+    bottom.className = "mt-1 flex items-center justify-between gap-3";
+    const dest = document.createElement("span");
+    dest.className = "truncate text-xs text-[var(--color-text-muted)]";
+    dest.title = link.destination;
+    dest.textContent = link.destination;
+    const created = document.createElement("span");
+    created.className = "shrink-0 text-xs text-[var(--color-text-muted)]";
+    created.textContent = formatDate(link.createdAt);
+    bottom.append(dest, created);
+
+    button.append(top, bottom);
+    li.appendChild(button);
+    return li;
+  }
+
+  async function load() {
+    hideStates();
+    loadingEl?.classList.remove("hidden");
+
+    try {
+      const links = await getTopLinks(TOP_LIMIT);
+      hideStates();
+
+      if (links.length === 0) {
+        emptyEl?.classList.remove("hidden");
+        return;
+      }
+
+      listEl?.replaceChildren(...links.map(buildRow));
+      listEl?.classList.remove("hidden");
+      listEl?.classList.add("flex");
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        hideStates();
+        window.dispatchEvent(new Event("nx:auth-required"));
+        return;
+      }
+
+      if (errorMessageEl) {
+        errorMessageEl.textContent = err instanceof Error ? err.message : "Could not load analytics.";
+      }
+      errorEl?.classList.remove("hidden");
+    }
+  }
+
+  function selectLink(id: string) {
+    listEl
+      ?.querySelectorAll("button[data-link-id]")
+      .forEach((el) =>
+        el.classList.remove("ring-2", "ring-[var(--color-border-active)]"),
+      );
+
+    const match = document.querySelector<HTMLElement>(`#top-links-list button[data-link-id="${CSS.escape(id)}"]`);
+    match?.classList.add("ring-2", "ring-[var(--color-border-active)]");
+
+    window.dispatchEvent(new CustomEvent("nx:select-link", { detail: { id } }));
+  }
+
+  listEl?.addEventListener("click", (event) => {
+    const target = (event.target as HTMLElement).closest("button[data-link-id]") as HTMLButtonElement | null;
+    if (!target) return;
+
+    const id = target.dataset.linkId;
+    if (id) selectLink(id);
+  });
+
+  window.addEventListener("nx:auth-required", () => {
+    document.getElementById("analytics-auth")?.classList.remove("hidden");
+  });
+
+  // Deep link: /analytics?link=<id> auto-selects that link's details.
+  load().then(() => {
+    const linkId = new URLSearchParams(window.location.search).get("link");
+    if (linkId) selectLink(linkId);
+  });
+</script>

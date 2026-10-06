@@ -7,58 +7,179 @@ import Input from "@/components/common/Input.astro";
 <GlassCard glow class="w-full">
   <div class="flex flex-wrap items-start justify-between gap-4">
     <div>
-      <h2 class="m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]">
-        Create a short link
-      </h2>
+      <h2 class="m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]">Create a short link</h2>
       <p class="mt-1 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
         Turn any long URL into a clean, shareable link.
       </p>
     </div>
   </div>
 
-  <form
-    id="create-link-form"
-    class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-start"
-    novalidate
-  >
-    <div class="w-full flex-1">
-      <Input
-        type="url"
-        name="url"
-        id="create-link-url"
-        placeholder="https://example.com/your-long-url"
-        aria-label="Long URL to shorten"
-      />
-    </div>
+  <form id="create-link-form" class="mt-5 flex flex-col gap-3" novalidate>
+    <Input
+      type="url"
+      name="url"
+      id="create-link-url"
+      required
+      placeholder="https://example.com/your-long-url"
+      aria-label="Long URL to shorten"
+    />
 
-    <Button
-      type="submit"
-      variant="primary"
-      class="h-11 shrink-0 sm:mt-0"
-    >
+    <Input
+      type="text"
+      name="slug"
+      id="create-link-slug"
+      placeholder="my-awesome-link"
+      aria-label="Custom slug (optional)"
+      helper="Optional. Use letters, numbers, hyphens, or underscores."
+    />
+
+    <Button type="submit" variant="primary" id="create-link-submit" class="h-11 w-full sm:w-auto sm:self-end">
       Shorten URL
     </Button>
   </form>
 
-  <p
-    id="create-link-status"
-    class="m-0 mt-4 hidden text-center text-sm text-[var(--color-text-muted)]"
-    role="status"
-  >
-    Shortening isn&rsquo;t connected to a backend yet — nothing was submitted.
-  </p>
+  <p id="create-link-error" class="m-0 mt-4 hidden text-sm text-[var(--color-danger)]" role="alert"></p>
+
+  <div id="create-link-result" class="mt-5 hidden">
+    <p class="m-0 text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Your short link</p>
+    <div class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <a
+        id="create-link-result-url"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="min-w-0 truncate text-sm font-semibold text-[var(--color-primary)] transition-colors hover:text-[var(--color-primary-light)]"
+      ></a>
+
+      <Button type="button" variant="secondary" size="sm" id="create-link-copy" class="shrink-0">Copy</Button>
+    </div>
+  </div>
 </GlassCard>
 
 <script>
-  const form = document.getElementById("create-link-form");
-  const status = document.getElementById("create-link-status");
+  import { createShortUrl } from "@/api/shortUrl.api";
 
-  form?.addEventListener("submit", (event) => {
-    // No backend API contract yet — prevent navigation and inform the user.
+  const form = document.getElementById("create-link-form") as HTMLFormElement | null;
+  const urlInput = document.getElementById("create-link-url") as HTMLInputElement | null;
+  const slugInput = document.getElementById("create-link-slug") as HTMLInputElement | null;
+  const submitButton = document.getElementById("create-link-submit") as HTMLButtonElement | null;
+  const errorEl = document.getElementById("create-link-error") as HTMLParagraphElement | null;
+  const resultEl = document.getElementById("create-link-result") as HTMLDivElement | null;
+  const resultLink = document.getElementById("create-link-result-url") as HTMLAnchorElement | null;
+  const copyButton = document.getElementById("create-link-copy") as HTMLButtonElement | null;
+
+  const SLUG_PATTERN = /^[A-Za-z0-9_-]+$/;
+  const SUBMIT_LABEL = "Shorten URL";
+
+  let isSubmitting = false;
+  let currentShortUrl = "";
+  let copyResetTimer: number | undefined;
+
+  function showError(message: string) {
+    if (!errorEl) return;
+    errorEl.textContent = message;
+    errorEl.classList.remove("hidden");
+  }
+
+  function clearError() {
+    if (!errorEl) return;
+    errorEl.textContent = "";
+    errorEl.classList.add("hidden");
+  }
+
+  function hideResult() {
+    resultEl?.classList.add("hidden");
+    if (resultLink) {
+      resultLink.removeAttribute("href");
+      resultLink.textContent = "";
+    }
+    currentShortUrl = "";
+  }
+
+  function setLoading(isLoading: boolean) {
+    isSubmitting = isLoading;
+    if (!submitButton) return;
+
+    submitButton.disabled = isLoading;
+    submitButton.textContent = "";
+
+    if (isLoading) {
+      const spinner = document.createElement("span");
+      spinner.className =
+        "inline-block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent";
+      spinner.setAttribute("aria-hidden", "true");
+      submitButton.append(spinner, document.createTextNode("Shortening..."));
+    } else {
+      submitButton.textContent = SUBMIT_LABEL;
+    }
+  }
+
+  form?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (status) {
-      status.classList.remove("hidden");
-      window.setTimeout(() => status.classList.add("hidden"), 4000);
+    if (isSubmitting) return;
+
+    clearError();
+    hideResult();
+
+    const url = urlInput?.value.trim() ?? "";
+
+    if (!url) {
+      showError("Please enter a URL to shorten.");
+      urlInput?.focus();
+      return;
+    }
+
+    try {
+      new URL(url);
+    } catch {
+      showError("Please enter a valid URL, including http:// or https://.");
+      urlInput?.focus();
+      return;
+    }
+
+    const slug = slugInput?.value.trim() ?? "";
+
+    if (slug && !SLUG_PATTERN.test(slug)) {
+      showError("Custom slug can only contain letters, numbers, hyphens, and underscores.");
+      slugInput?.focus();
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { shortUrl } = await createShortUrl(url, slug || undefined);
+      currentShortUrl = shortUrl;
+
+      if (resultLink) {
+        resultLink.href = shortUrl;
+        resultLink.textContent = shortUrl;
+      }
+
+      resultEl?.classList.remove("hidden");
+
+      // Let the dashboard (stats + recent links) refresh without a page reload.
+      window.dispatchEvent(new Event("nx:link-created"));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      showError(message);
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  copyButton?.addEventListener("click", async () => {
+    if (!currentShortUrl) return;
+
+    try {
+      await navigator.clipboard.writeText(currentShortUrl);
+      copyButton.textContent = "Copied!";
+      window.clearTimeout(copyResetTimer);
+      copyResetTimer = window.setTimeout(() => {
+        copyButton.textContent = "Copy";
+      }, 2000);
+    } catch {
+      showError("Could not copy to clipboard. Please copy it manually.");
     }
   });
 </script>

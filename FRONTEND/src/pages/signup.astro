@@ -1,21 +1,52 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import RegisterForm from "@/components/auth/RegisterForm.astro";
+import ThemeToggle from "@/components/common/ThemeToggle.astro";
 ---
 
 <Layout
-  title="Create your account — NexURL"
-  description="Create your NexURL account and start shortening links."
+  title="Create your account — HyperLink"
+  description="Create your HyperLink account and start shortening links."
+  stars={14}
 >
-  <main class="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
-    <!-- Ambient background glows -->
-    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
-      <div class="bg-glow bg-glow-secondary -top-24 left-1/2 -translate-x-[20%]" />
-      <div class="bg-glow bg-glow-accent -bottom-32 left-[-80px] opacity-[0.08]" />
+  <main class="relative flex min-h-screen items-stretch">
+    <div class="absolute right-4 top-4 z-20">
+      <ThemeToggle />
     </div>
 
-    <div class="relative w-full max-w-md">
-      <RegisterForm />
+    <!-- Form panel -->
+    <div class="relative flex w-full items-center justify-center px-4 py-10 lg:w-1/2">
+      <div class="relative w-full max-w-md rounded-[26px] border border-[var(--glass-border)] bg-[var(--glass-panel)] p-8 shadow-[var(--shadow-lg)] backdrop-blur-2xl">
+        <RegisterForm />
+      </div>
+    </div>
+
+    <!-- Decorative panel -->
+    <div class="relative hidden w-1/2 items-center justify-center lg:flex">
+      <div class="relative mx-6 max-w-lg rounded-[2rem] border border-[var(--glass-border)] bg-[var(--glass-panel)] p-12 backdrop-blur-2xl">
+        <span class="text-xs font-semibold uppercase tracking-widest text-[var(--color-secondary)]">Get Started</span>
+        <h1 class="mt-4 text-4xl font-bold leading-[1.1] tracking-tight text-[var(--color-text-primary)]">
+          Start your <span class="gradient-text">link journey.</span>
+        </h1>
+        <p class="mt-4 max-w-sm text-base leading-relaxed text-[var(--color-text-muted)]">
+          Create an account to shorten links, track clicks, and manage everything from your personal dashboard.
+        </p>
+
+        <ul class="mt-8 flex flex-col gap-3">
+          <li class="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+            <svg viewBox="0 0 16 16" class="h-4 w-4 text-[var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" /></svg>
+            Free forever — no credit card required
+          </li>
+          <li class="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+            <svg viewBox="0 0 16 16" class="h-4 w-4 text-[var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" /></svg>
+            Real-time click analytics
+          </li>
+          <li class="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+            <svg viewBox="0 0 16 16" class="h-4 w-4 text-[var(--color-success)]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" /></svg>
+            A clean, modern dashboard
+          </li>
+        </ul>
+      </div>
     </div>
   </main>
 </Layout>

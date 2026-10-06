@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from "@/components/common/ThemeToggle.astro";
+
 interface Props {
   /** Which nav item is currently active. */
   active?: "dashboard" | "links" | "analytics" | "settings";
@@ -15,7 +17,7 @@ const navItems = [
   },
   {
     id: "links",
-    label: "Links",
+    label: "My Links",
     href: "/dashboard#recent-links",
     icon: '<path d="M9.5 14.5 14.5 9.5" /><path d="M8 12.5 5.5 15a3 3 0 0 0 4.2 4.2L12 16.7" /><path d="M16 11.5l2.5-2.5a3 3 0 0 0-4.2-4.2L12 7.3" />',
   },
@@ -33,45 +35,38 @@ const navItems = [
   },
 ];
 
-const activeIconClass: Record<string, string> = {
-  dashboard: "text-[var(--color-primary)]",
-  links: "text-[var(--color-secondary)]",
-  analytics: "text-[var(--color-accent)]",
-  settings: "text-[var(--color-text-primary)]",
-};
-
-function linkClasses(itemId: string, isMobile = false) {
+function linkClasses(itemId: string) {
   const isActive = itemId === active;
-  const base = [
+  return [
     "relative",
     "flex",
     "items-center",
     "gap-3",
-    "rounded-lg",
+    "rounded-xl",
+    "px-3",
+    "py-2.5",
     "text-sm",
     "font-medium",
-    "transition-colors",
+    "transition-all",
     "duration-200",
     "focus-visible:outline-none",
     "focus-visible:ring-2",
     "focus-visible:ring-[var(--color-border-active)]",
-    isMobile ? "px-3 py-2.5" : "px-3 py-2",
     isActive
-      ? "bg-[var(--color-surface-hover)] text-[var(--color-text-primary)]"
+      ? "bg-gradient-to-r from-[var(--color-primary)]/10 to-transparent text-[var(--color-text-primary)] shadow-[0_0_20px_rgba(255,138,101,0.08)]"
       : "text-[var(--color-text-muted)] hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-text-primary)]",
-  ];
-  return base.join(" ");
+  ].join(" ");
 }
 ---
 
 <!-- Desktop sidebar -->
-<aside class="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-[var(--color-border-soft)] bg-[var(--color-background-soft)] lg:flex">
+<aside class="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-[var(--glass-border)] bg-[var(--glass-panel)] backdrop-blur-2xl lg:flex">
   <!-- Brand -->
-  <a href="/" class="flex h-16 shrink-0 items-center gap-2 border-b border-[var(--color-border-soft)] px-6 text-[var(--color-text-primary)]" aria-label="NexURL home">
-    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--gradient-primary)] text-sm font-bold text-[#0b0b10]" aria-hidden="true">N</span>
+  <a href="/" class="flex h-16 shrink-0 items-center gap-2 px-6 text-[var(--color-text-primary)]" aria-label="HyperLink home">
+    <span class="flex h-8 w-8 items-center justify-center rounded-full bg-[image:var(--gradient-primary)] text-sm font-bold text-[#0b0b10]" aria-hidden="true">H</span>
     <span class="text-base font-semibold tracking-tight">
-      <span class="font-light">Nex</span>
-      <span class="gradient-text font-semibold">URL</span>
+      <span class="font-light">Hyper</span>
+      <span class="gradient-text font-semibold">Link</span>
     </span>
   </a>
 
@@ -89,14 +84,14 @@ function linkClasses(itemId: string, isMobile = false) {
               {
                 item.id === active && (
                   <span
-                    class="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[var(--gradient-primary)]"
+                    class="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[image:var(--gradient-primary)]"
                     aria-hidden="true"
                   />
                 )
               }
               <svg
                 viewBox="0 0 24 24"
-                class:list={["h-[18px] w-[18px] shrink-0", item.id === active ? activeIconClass[item.id] : "text-[var(--color-text-muted)]"]}
+                class:list={["h-[18px] w-[18px] shrink-0", item.id === active ? "text-[var(--color-primary)]" : "text-[var(--color-text-muted)]"]}
                 fill="none"
                 stroke="currentColor"
                 stroke-width="1.7"
@@ -113,30 +108,38 @@ function linkClasses(itemId: string, isMobile = false) {
     </ul>
   </nav>
 
-  <!-- Account section -->
+  <!-- Theme + logout -->
   <div class="shrink-0 border-t border-[var(--color-border-soft)] p-3">
-    <a href="/settings" class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-[var(--glass-background-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]">
+    <div class="mb-2 flex items-center justify-between rounded-xl px-3 py-2">
+      <span class="text-sm font-medium text-[var(--color-text-muted)]">Appearance</span>
+      <ThemeToggle />
+    </div>
+    <button
+      type="button"
+      id="sidebar-logout"
+      class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-[var(--color-text-muted)] transition-colors duration-200 hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-danger)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+    >
       <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)]" aria-hidden="true">
         <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="8" r="3.5" />
-          <path d="M5 20c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" />
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <path d="M16 17l5-5-5-5" />
+          <path d="M21 12H9" />
         </svg>
       </span>
       <span class="min-w-0">
-        <span class="block text-sm font-medium text-[var(--color-text-primary)]">Account</span>
-        <span class="block truncate text-xs text-[var(--color-text-muted)]">Manage your profile</span>
+        <span class="block text-sm font-medium text-[var(--color-text-primary)]">Log out</span>
       </span>
-    </a>
+    </button>
   </div>
 </aside>
 
 <!-- Mobile top bar -->
-<header class="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[var(--color-border-soft)] bg-[var(--color-background)]/80 px-4 backdrop-blur-xl lg:hidden">
-  <a href="/" class="flex items-center gap-2 text-[var(--color-text-primary)]" aria-label="NexURL home">
-    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--gradient-primary)] text-sm font-bold text-[#0b0b10]" aria-hidden="true">N</span>
+<header class="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-[var(--glass-border)] bg-[var(--glass-background-strong)] px-4 backdrop-blur-2xl lg:hidden">
+  <a href="/" class="flex items-center gap-2 text-[var(--color-text-primary)]" aria-label="HyperLink home">
+    <span class="flex h-8 w-8 items-center justify-center rounded-full bg-[image:var(--gradient-primary)] text-sm font-bold text-[#0b0b10]" aria-hidden="true">H</span>
     <span class="text-base font-semibold tracking-tight">
-      <span class="font-light">Nex</span>
-      <span class="gradient-text font-semibold">URL</span>
+      <span class="font-light">Hyper</span>
+      <span class="gradient-text font-semibold">Link</span>
     </span>
   </a>
 
@@ -160,16 +163,16 @@ function linkClasses(itemId: string, isMobile = false) {
 <!-- Mobile drawer -->
 <aside
   id="dashboard-drawer"
-  class="fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] -translate-x-full flex-col border-r border-[var(--color-border)] bg-[var(--color-background-soft)] transition-transform duration-300 ease-out lg:hidden"
+  class="fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] -translate-x-full flex-col border-r border-[var(--glass-border)] bg-[var(--glass-background-strong)] backdrop-blur-2xl transition-transform duration-300 ease-out lg:hidden"
   data-drawer
   aria-label="Mobile navigation"
 >
-  <div class="flex h-16 shrink-0 items-center justify-between border-b border-[var(--color-border-soft)] px-4">
-    <a href="/" class="flex items-center gap-2 text-[var(--color-text-primary)]" aria-label="NexURL home">
-      <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--gradient-primary)] text-sm font-bold text-[#0b0b10]" aria-hidden="true">N</span>
+  <div class="flex h-14 shrink-0 items-center justify-between border-b border-[var(--color-border-soft)] px-4">
+    <a href="/" class="flex items-center gap-2 text-[var(--color-text-primary)]" aria-label="HyperLink home">
+      <span class="flex h-8 w-8 items-center justify-center rounded-full bg-[image:var(--gradient-primary)] text-sm font-bold text-[#0b0b10]" aria-hidden="true">H</span>
       <span class="text-base font-semibold tracking-tight">
-        <span class="font-light">Nex</span>
-        <span class="gradient-text font-semibold">URL</span>
+        <span class="font-light">Hyper</span>
+        <span class="gradient-text font-semibold">Link</span>
       </span>
     </a>
 
@@ -192,20 +195,20 @@ function linkClasses(itemId: string, isMobile = false) {
           <li class="p-0">
             <a
               href={item.href}
-              class={linkClasses(item.id, true)}
+              class={linkClasses(item.id)}
               aria-current={item.id === active ? "page" : undefined}
             >
               {
                 item.id === active && (
                   <span
-                    class="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[var(--gradient-primary)]"
+                    class="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[image:var(--gradient-primary)]"
                     aria-hidden="true"
                   />
                 )
               }
               <svg
                 viewBox="0 0 24 24"
-                class:list={["h-[18px] w-[18px] shrink-0", item.id === active ? activeIconClass[item.id] : "text-[var(--color-text-muted)]"]}
+                class:list={["h-[18px] w-[18px] shrink-0", item.id === active ? "text-[var(--color-primary)]" : "text-[var(--color-text-muted)]"]}
                 fill="none"
                 stroke="currentColor"
                 stroke-width="1.7"
@@ -223,22 +226,30 @@ function linkClasses(itemId: string, isMobile = false) {
   </nav>
 
   <div class="shrink-0 border-t border-[var(--color-border-soft)] p-3">
-    <a href="/settings" class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-[var(--glass-background-hover)]">
+    <div class="mb-2 flex items-center justify-between rounded-xl px-3 py-2">
+      <span class="text-sm font-medium text-[var(--color-text-muted)]">Appearance</span>
+      <ThemeToggle />
+    </div>
+    <button
+      type="button"
+      id="sidebar-logout-mobile"
+      class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-[var(--color-text-muted)] transition-colors duration-200 hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-danger)]"
+    >
       <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)]" aria-hidden="true">
         <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="8" r="3.5" />
-          <path d="M5 20c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" />
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <path d="M16 17l5-5-5-5" />
+          <path d="M21 12H9" />
         </svg>
       </span>
-      <span class="min-w-0">
-        <span class="block text-sm font-medium text-[var(--color-text-primary)]">Account</span>
-        <span class="block truncate text-xs text-[var(--color-text-muted)]">Manage your profile</span>
-      </span>
-    </a>
+      <span>Log out</span>
+    </button>
   </div>
 </aside>
 
 <script>
+  import { logout } from "@/api/auth.api";
+
   const toggle = document.querySelector("[data-drawer-toggle]");
   const drawer = document.querySelector("[data-drawer]");
   const overlay = document.querySelector("[data-drawer-overlay]");
@@ -271,5 +282,17 @@ function linkClasses(itemId: string, isMobile = false) {
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeDrawer();
+  });
+
+  // Bind sidebar logout buttons.
+  document.querySelectorAll("#sidebar-logout, #sidebar-logout-mobile").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      try {
+        await logout();
+        window.location.href = "/";
+      } catch {
+        // ignore
+      }
+    });
   });
 </script>

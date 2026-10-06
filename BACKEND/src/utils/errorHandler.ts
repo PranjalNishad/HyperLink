@@ -11,13 +11,19 @@ export const errorHandler: ErrorHandler = (err, c) => {
     );
   }
 
-  // Fallback for unhandled errors
-  console.error(err);
+  // Log the real error server-side; never leak internals to the client.
+  console.error("[unhandled error]", err);
+
+  const isProduction = process.env.NODE_ENV === "production";
+  const message =
+    !isProduction && err instanceof Error && err.message
+      ? err.message
+      : "Internal Server Error";
 
   return c.json(
     {
       success: false,
-      message: err.message || "Internal Server Error",
+      message,
     },
     500
   );

@@ -2,38 +2,39 @@
 const links = [
   { href: "#features", label: "Features" },
   { href: "#analytics", label: "Analytics" },
+  { href: "#how-it-works", label: "How it works" },
   { href: "/login", label: "Login" },
 ];
 ---
 
 <footer class="border-t border-[var(--color-border-soft)]">
-  <div class="container-page flex flex-col gap-8 py-12 md:py-16">
-    <div class="flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
+  <div class="container-page flex flex-col gap-8 py-10 md:py-12">
+    <div class="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
       <!-- Brand -->
       <div>
-        <a href="/" class="flex items-center gap-2 text-[var(--color-text-primary)]" aria-label="NexURL home">
+        <a href="/" class="flex items-center gap-2 text-[var(--color-text-primary)]" aria-label="HyperLink home">
           <span
-            class="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--gradient-primary)] text-xs font-bold text-[#0b0b10]"
+            class="flex h-7 w-7 items-center justify-center rounded-full bg-[image:var(--gradient-primary)] text-xs font-bold text-[#0b0b10]"
             aria-hidden="true"
           >
             N
           </span>
           <span class="text-base font-semibold tracking-tight">
-            <span class="font-light">Nex</span>
-            <span class="gradient-text font-semibold">URL</span>
+            <span class="font-light">Hyper</span>
+            <span class="gradient-text font-semibold">Link</span>
           </span>
         </a>
-        <p class="mt-3 text-sm text-[var(--color-text-muted)]">
+        <p class="mt-2 text-sm text-[var(--color-text-muted)]">
           Short Links. Big Possibilities.
         </p>
       </div>
 
       <!-- Footer links -->
       <nav aria-label="Footer">
-        <ul class="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <ul class="flex flex-wrap items-center gap-x-5 gap-y-2">
           {
             links.map((link) => (
-              <li>
+              <li data-guest-only={link.href === "/login" ? "" : undefined}>
                 <a
                   href={link.href}
                   class="text-sm text-[var(--color-text-muted)] transition-colors duration-200 hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
@@ -43,13 +44,21 @@ const links = [
               </li>
             ))
           }
+          <li data-auth-only style="display:none">
+            <a
+              href="/dashboard"
+              class="text-sm text-[var(--color-text-muted)] transition-colors duration-200 hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+            >
+              Dashboard
+            </a>
+          </li>
         </ul>
       </nav>
     </div>
 
     <div class="border-t border-[var(--color-border-soft)] pt-6">
-      <p class="text-xs text-[var(--color-text-subtle)]">
-        © 2026 NexURL. All rights reserved.
+      <p class="m-0 text-xs text-[var(--color-text-subtle)]">
+        © 2026 HyperLink. All rights reserved.
       </p>
     </div>
   </div>

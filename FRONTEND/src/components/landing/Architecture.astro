@@ -1,59 +1,89 @@
 ---
 const steps = [
   {
-    index: "01",
-    title: "Paste your URL",
-    description: "Drop in any long link you want to share.",
+    title: "Your URL",
+    description: "Paste any long link you want to share.",
   },
   {
-    index: "02",
-    title: "Create your short link",
-    description: "Get a clean, branded link in an instant.",
+    title: "HyperLink",
+    description: "We generate a unique, compact short link.",
   },
   {
-    index: "03",
-    title: "Share and track",
-    description: "Send it anywhere and watch the clicks roll in.",
+    title: "Short URL",
+    description: "Share it anywhere and track clicks in real time.",
   },
 ];
 ---
 
-<section class="container-page px-4 py-20 md:py-24" id="how-it-works">
-  <div class="mx-auto max-w-2xl text-center">
-    <h2 class="m-0 text-2xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-3xl md:text-4xl">
-      How it works
-    </h2>
-    <p class="mx-auto mt-3 max-w-md text-base leading-relaxed text-[var(--color-text-muted)]">
-      Three simple steps between you and a better link.
-    </p>
-  </div>
+<section class="relative overflow-hidden py-20 md:py-28" id="how-it-works">
+  <div class="container-page relative px-4">
+    <div class="mx-auto max-w-2xl text-center">
+      <span class="text-xs font-semibold uppercase tracking-widest text-[var(--color-primary)]">How it works</span>
+      <h2 class="mt-3 m-0 text-3xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-4xl">
+        From long to short in <span class="gradient-text">seconds</span>
+      </h2>
+      <p class="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[var(--color-text-muted)]">
+        A simple three-step flow that powers every short link.
+      </p>
+    </div>
 
-  <div class="relative mt-12 grid gap-10 sm:grid-cols-3 sm:gap-6">
-    <!-- Connecting line (desktop only) -->
-    <div
-      class="absolute left-[16%] right-[16%] top-7 hidden h-px bg-[var(--gradient-primary)] opacity-20 sm:block"
-      aria-hidden="true"
-    />
+    <div class="relative mt-14 grid gap-6 sm:grid-cols-3">
+      <!-- Connecting line -->
+      <div
+        class="absolute left-[16%] right-[16%] top-[3.25rem] hidden h-px bg-gradient-to-r from-transparent via-[var(--color-primary)]/30 to-transparent sm:block"
+        aria-hidden="true"
+      />
 
-    {
-      steps.map((step) => (
-        <div class="relative flex flex-col items-center text-center">
-          <div
-            class="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-sm)]"
-          >
-            <span class="gradient-text font-mono text-sm font-semibold">
-              {step.index}
-            </span>
+      {
+        steps.map((step, index) => (
+          <div class="relative flex flex-col items-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-panel)] p-6 text-center backdrop-blur-xl transition-all duration-200 hover:border-[var(--glass-border-hover)] hover:shadow-[var(--shadow-glow)]">
+            <div class="relative flex h-14 w-14 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-sm)]">
+              <span class="gradient-text font-mono text-sm font-semibold">0{index + 1}</span>
+              <div class="absolute inset-0 rounded-full bg-[image:var(--gradient-primary)] opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-20" />
+            </div>
+
+            <h3 class="mt-5 m-0 text-base font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-lg">
+              {step.title}
+            </h3>
+            <p class="mx-auto mt-2 max-w-[16rem] text-sm leading-relaxed text-[var(--color-text-muted)]">
+              {step.description}
+            </p>
           </div>
+        ))
+      }
+    </div>
 
-          <h3 class="mt-5 m-0 text-base font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-lg">
-            {step.title}
-          </h3>
-          <p class="mx-auto mt-2 max-w-[16rem] text-sm leading-relaxed text-[var(--color-text-muted)]">
-            {step.description}
+    <!-- Architecture diagram -->
+    <div class="mt-12 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-panel)] p-6 backdrop-blur-xl md:p-8">
+      <div class="flex flex-col items-center justify-between gap-6 md:flex-row">
+        <div class="text-center md:text-left">
+          <h3 class="m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]">Architecture</h3>
+          <p class="mt-1 m-0 max-w-xs text-sm text-[var(--color-text-muted)]">
+            A modern stack built for speed and reliability.
           </p>
         </div>
-      ))
-    }
+
+        <div class="flex flex-col items-center gap-4 sm:flex-row">
+          <div class="flex flex-col items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3">
+            <span class="text-xs font-semibold uppercase tracking-wide text-[var(--color-primary)]">Frontend</span>
+            <span class="text-sm font-medium text-[var(--color-text-primary)]">Astro + Tailwind</span>
+          </div>
+          <svg viewBox="0 0 24 24" class="h-5 w-5 text-[var(--color-text-subtle)]" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+          <div class="flex flex-col items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3">
+            <span class="text-xs font-semibold uppercase tracking-wide text-[var(--color-secondary)]">Backend</span>
+            <span class="text-sm font-medium text-[var(--color-text-primary)]">Hono + Bun</span>
+          </div>
+          <svg viewBox="0 0 24 24" class="h-5 w-5 text-[var(--color-text-subtle)]" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+          <div class="flex flex-col items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3">
+            <span class="text-xs font-semibold uppercase tracking-wide text-[var(--color-accent)]">Database</span>
+            <span class="text-sm font-medium text-[var(--color-text-primary)]">MongoDB</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>

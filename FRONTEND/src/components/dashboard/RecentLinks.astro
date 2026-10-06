@@ -1,146 +1,434 @@
 ---
+import Button from "@/components/common/Button.astro";
 import LinkActions from "@/components/links/LinkActions.astro";
-
-/**
- * Shape of a link row for the dashboard table.
- * When the backend contract is defined, this should move to src/types/shortUrl.ts.
- */
-interface LinkRow {
-  id: string;
-  destination: string;
-  shortUrl: string;
-  clicks: number;
-  createdAt: string;
-}
-
-interface Props {
-  /** Links to render. When omitted/empty, a friendly empty state is shown. */
-  links?: LinkRow[];
-}
-
-const { links = [] } = Astro.props;
-const hasLinks = links.length > 0;
-
-// Truncate long destination URLs in the middle for display.
-function truncateMiddle(url: string, max = 48): string {
-  if (url.length <= max) return url;
-  const head = url.slice(0, Math.floor(max / 2));
-  const tail = url.slice(-Math.floor(max / 3));
-  return `${head}…${tail}`;
-}
+import Modal from "@/components/common/Modal.astro";
 ---
 
 <section id="recent-links" class="scroll-mt-24">
   <div class="mb-4 flex items-center justify-between">
-    <h2 class="m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]">
-      Recent Links
-    </h2>
+    <div>
+      <h2 class="m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]">Recent Links</h2>
+      <p class="mt-1 m-0 text-sm text-[var(--color-text-muted)]">Manage and track your latest short links.</p>
+    </div>
   </div>
 
-  {
-    !hasLinks && (
-      <div class="rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-6 py-14 text-center">
-        <!-- Subtle inline illustration -->
-        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--gradient-primary-soft)]" aria-hidden="true">
-          <svg viewBox="0 0 24 24" class="h-6 w-6 text-[var(--color-primary)]" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9.5 14.5 14.5 9.5" />
-            <path d="M8 12.5 5.5 15a3 3 0 0 0 4.2 4.2L12 16.7" />
-            <path d="M16 11.5l2.5-2.5a3 3 0 0 0-4.2-4.2L12 7.3" />
-          </svg>
-        </div>
+  <!-- Loading -->
+  <div
+    id="recent-links-loading"
+    class="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-panel)] backdrop-blur-xl px-6 py-14 text-center"
+  >
+    <p class="m-0 text-sm text-[var(--color-text-muted)]" role="status">Loading your links&hellip;</p>
+  </div>
 
-        <h3 class="mt-5 m-0 text-base font-semibold text-[var(--color-text-primary)]">
-          No links yet
-        </h3>
-        <p class="mx-auto mt-1.5 max-w-xs text-sm leading-relaxed text-[var(--color-text-muted)]">
-          Create your first short link to see it here.
-        </p>
+  <!-- Error -->
+  <div
+    id="recent-links-error"
+    class="hidden rounded-xl border border-[var(--glass-border)] bg-[var(--glass-panel)] backdrop-blur-xl px-6 py-10 text-center"
+  >
+    <p id="recent-links-error-message" class="m-0 text-sm text-[var(--color-danger)]" role="alert"></p>
+    <Button id="recent-links-retry" type="button" variant="secondary" size="sm" class="mt-4">Try again</Button>
+  </div>
 
-        <a
-          href="#create-link"
-          class="mt-6 inline-flex h-10 items-center gap-2 rounded-lg bg-[var(--gradient-primary)] px-5 text-sm font-semibold text-[#0b0b10] shadow-[0_2px_20px_rgba(255,138,101,0.15)] transition-all duration-200 hover:brightness-105 hover:shadow-[0_6px_28px_rgba(255,138,101,0.28)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
-        >
-          <svg viewBox="0 0 16 16" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-            <path d="M8 3v10M3 8h10" />
-          </svg>
-          Create your first link
-        </a>
-      </div>
-    )
-  }
+  <!-- Empty state -->
+  <div
+    id="recent-links-empty"
+    class="hidden rounded-xl border border-[var(--glass-border)] bg-[var(--glass-panel)] backdrop-blur-xl px-6 py-14 text-center"
+  >
+    <div
+      class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--gradient-primary-soft)]"
+      aria-hidden="true"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        class="h-6 w-6 text-[var(--color-primary)]"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M9.5 14.5 14.5 9.5" />
+        <path d="M8 12.5 5.5 15a3 3 0 0 0 4.2 4.2L12 16.7" />
+        <path d="M16 11.5l2.5-2.5a3 3 0 0 0-4.2-4.2L12 7.3" />
+      </svg>
+    </div>
 
-  {
-    hasLinks && (
-      <div class="overflow-hidden rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)]">
-        <!-- Desktop table -->
-        <table class="hidden w-full border-collapse text-left md:table">
-          <thead>
-            <tr class="border-b border-[var(--color-border-soft)]">
-              <th class="px-5 py-3 text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Destination URL</th>
-              <th class="px-5 py-3 text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Short URL</th>
-              <th class="px-5 py-3 text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Clicks</th>
-              <th class="px-5 py-3 text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Created</th>
-              <th class="px-5 py-3 text-right text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              links.map((link) => (
-                <tr class="border-b border-[var(--color-border-soft)] last:border-0 hover:bg-[var(--glass-background-hover)]/40">
-                  <td class="max-w-[16rem] px-5 py-4">
-                    <span class="block truncate text-sm text-[var(--color-text-secondary)]" title={link.destination}>
-                      {link.destination}
-                    </span>
-                  </td>
-                  <td class="px-5 py-4">
-                    <a href="#" class="text-sm font-medium text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-primary)]">
-                      {link.shortUrl}
-                    </a>
-                  </td>
-                  <td class="px-5 py-4 font-mono text-sm text-[var(--color-text-secondary)]">
-                    {link.clicks}
-                  </td>
-                  <td class="px-5 py-4 text-sm text-[var(--color-text-muted)]">
-                    {link.createdAt}
-                  </td>
-                  <td class="px-5 py-4">
-                    <div class="flex justify-end">
-                      <LinkActions />
-                    </div>
-                  </td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
+    <h3 class="mt-5 m-0 text-base font-semibold text-[var(--color-text-primary)]">No links yet</h3>
+    <p class="mx-auto mt-1.5 max-w-xs text-sm leading-relaxed text-[var(--color-text-muted)]">
+      Create your first short link to see it here.
+    </p>
 
-        <!-- Mobile cards -->
-        <ul class="flex list-none flex-col divide-y divide-[var(--color-border-soft)] p-0 md:hidden">
-          {
-            links.map((link) => (
-              <li class="p-0">
-                <div class="flex flex-col gap-3 px-4 py-4">
-                  <div class="flex flex-col gap-0.5">
-                    <a href="#" class="text-sm font-medium text-[var(--color-text-primary)]">
-                      {link.shortUrl}
-                    </a>
-                    <span class="block truncate text-xs text-[var(--color-text-muted)]" title={link.destination}>
-                      {truncateMiddle(link.destination, 40)}
-                    </span>
-                  </div>
+    <a
+      href="#create-link"
+      class="mt-6 inline-flex h-10 items-center gap-2 rounded-lg bg-[image:var(--gradient-primary)] px-5 text-sm font-semibold text-[#0b0b10] shadow-[0_2px_20px_rgba(255,138,101,0.15)] transition-all duration-200 hover:brightness-105 hover:shadow-[0_6px_28px_rgba(255,138,101,0.28)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+    >
+      <svg
+        viewBox="0 0 16 16"
+        class="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        aria-hidden="true"
+      >
+        <path d="M8 3v10M3 8h10" />
+      </svg>
+      Create your first link
+    </a>
+  </div>
 
-                  <div class="flex items-center justify-between gap-3">
-                    <span class="text-xs text-[var(--color-text-muted)]">
-                      {link.clicks} clicks · {link.createdAt}
-                    </span>
-                    <LinkActions />
-                  </div>
-                </div>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    )
-  }
+  <!-- Data -->
+  <div
+    id="recent-links-data"
+    class="hidden overflow-hidden rounded-xl border border-[var(--glass-border)] bg-[var(--glass-panel)] backdrop-blur-xl"
+  >
+    <!-- Desktop table (only once the content area is wide enough) -->
+    <table class="hidden w-full table-fixed border-collapse text-left xl:table">
+      <thead>
+        <tr class="border-b border-[var(--glass-border)] bg-[var(--glass-background)]">
+          <th class="w-[28%] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Short URL</th>
+          <th class="w-[28%] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Original URL</th>
+          <th class="w-[10%] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Clicks</th>
+          <th class="w-[14%] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Created</th>
+          <th class="w-[20%] px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="recent-links-tbody"></tbody>
+    </table>
+
+    <!-- Mobile cards -->
+    <ul id="recent-links-mobile" class="flex list-none flex-col divide-y divide-[var(--color-border-soft)] p-0 xl:hidden"></ul>
+  </div>
+
+  <!-- Pagination -->
+  <div id="recent-links-pagination" class="mt-4 hidden items-center justify-between">
+    <Button id="recent-links-prev" type="button" variant="secondary" size="sm">Previous</Button>
+    <span id="recent-links-page-info" class="text-xs text-[var(--color-text-muted)]"></span>
+    <Button id="recent-links-next" type="button" variant="secondary" size="sm">Next</Button>
+  </div>
 </section>
+
+<!-- Delete confirmation -->
+<Modal
+  id="delete-link-modal"
+  title="Delete this link?"
+  description="Are you sure you want to delete this short link? This action cannot be undone."
+>
+  <p id="delete-link-error" class="m-0 hidden text-sm text-[var(--color-danger)]" role="alert"></p>
+  <Fragment slot="footer">
+    <Button variant="secondary" type="button" data-modal-close>Cancel</Button>
+    <Button variant="danger" type="button" id="delete-link-confirm">Delete</Button>
+  </Fragment>
+</Modal>
+
+<!-- Reused action markup, cloned per row so the design lives in one place. -->
+<template id="recent-links-actions-desktop">
+  <div class="flex flex-wrap justify-end gap-1"><LinkActions /></div>
+</template>
+<template id="recent-links-actions-mobile">
+  <LinkActions />
+</template>
+
+<script>
+  import { getUserUrls } from "@/api/user.api";
+  import { deleteShortUrl } from "@/api/shortUrl.api";
+  import { ApiError } from "@/api/client";
+  import type { PaginationMeta, ShortUrl } from "@/types/shortUrl";
+
+  const PAGE_LIMIT = 10;
+
+  const loadingEl = document.getElementById("recent-links-loading");
+  const errorEl = document.getElementById("recent-links-error");
+  const errorMessageEl = document.getElementById("recent-links-error-message");
+  const retryEl = document.getElementById("recent-links-retry");
+  const emptyEl = document.getElementById("recent-links-empty");
+  const dataEl = document.getElementById("recent-links-data");
+  const tbodyEl = document.getElementById("recent-links-tbody");
+  const mobileEl = document.getElementById("recent-links-mobile");
+  const paginationEl = document.getElementById("recent-links-pagination");
+  const prevEl = document.getElementById("recent-links-prev") as HTMLButtonElement | null;
+  const nextEl = document.getElementById("recent-links-next") as HTMLButtonElement | null;
+  const pageInfoEl = document.getElementById("recent-links-page-info");
+  const desktopActionsTpl = document.getElementById("recent-links-actions-desktop") as HTMLTemplateElement | null;
+  const mobileActionsTpl = document.getElementById("recent-links-actions-mobile") as HTMLTemplateElement | null;
+  const deleteModal = document.getElementById("delete-link-modal") as HTMLDialogElement | null;
+  const deleteConfirmEl = document.getElementById("delete-link-confirm") as HTMLButtonElement | null;
+  const deleteErrorEl = document.getElementById("delete-link-error") as HTMLParagraphElement | null;
+
+  let currentPage = 1;
+  let isLoading = false;
+  let pendingDeleteId = "";
+  let isDeleting = false;
+  let copyResetTimer: number | undefined;
+
+  function setHidden(el: HTMLElement | null, hidden: boolean) {
+    el?.classList.toggle("hidden", hidden);
+  }
+
+  function hideAll() {
+    setHidden(loadingEl, true);
+    setHidden(errorEl, true);
+    setHidden(emptyEl, true);
+    setHidden(dataEl, true);
+    setHidden(paginationEl, true);
+  }
+
+  function formatDate(iso: string): string {
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return "—";
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  function setAnalyticsHref(fragment: DocumentFragment, id: string) {
+    fragment.querySelectorAll<HTMLAnchorElement>("[data-analytics-link]").forEach((anchor) => {
+      anchor.href = `/analytics?link=${encodeURIComponent(id)}`;
+    });
+  }
+
+  function buildDesktopRow(link: ShortUrl): HTMLTableRowElement {
+    const tr = document.createElement("tr");
+    tr.dataset.linkId = link.id;
+    tr.dataset.shortUrl = link.shortUrl;
+    tr.className =
+      "border-b border-[var(--color-border-soft)] last:border-0 transition-colors duration-200 hover:bg-[var(--glass-background-hover)]/30";
+
+    const shortTd = document.createElement("td");
+    shortTd.className = "px-5 py-4";
+    const shortLink = document.createElement("a");
+    shortLink.className =
+      "block truncate text-sm font-medium text-[var(--color-primary)] transition-colors hover:text-[var(--color-primary-light)]";
+    shortLink.href = link.shortUrl;
+    shortLink.target = "_blank";
+    shortLink.rel = "noopener noreferrer";
+    shortLink.title = link.shortUrl;
+    shortLink.textContent = link.shortUrl;
+    shortTd.appendChild(shortLink);
+
+    const destTd = document.createElement("td");
+    destTd.className = "max-w-[16rem] px-5 py-4";
+    const dest = document.createElement("span");
+    dest.className = "block truncate text-sm text-[var(--color-text-secondary)]";
+    dest.title = link.destination;
+    dest.textContent = link.destination;
+    destTd.appendChild(dest);
+
+    const clicksTd = document.createElement("td");
+    clicksTd.className = "px-5 py-4 font-mono text-sm text-[var(--color-text-secondary)]";
+    clicksTd.textContent = String(link.clicks);
+
+    const createdTd = document.createElement("td");
+    createdTd.className = "px-5 py-4 text-sm text-[var(--color-text-muted)]";
+    createdTd.textContent = formatDate(link.createdAt);
+
+    const actionsTd = document.createElement("td");
+    actionsTd.className = "px-5 py-4";
+    if (desktopActionsTpl) {
+      const actions = desktopActionsTpl.content.cloneNode(true) as DocumentFragment;
+      setAnalyticsHref(actions, link.id);
+      actionsTd.appendChild(actions);
+    }
+
+    tr.append(shortTd, destTd, clicksTd, createdTd, actionsTd);
+    return tr;
+  }
+
+  function buildMobileCard(link: ShortUrl): HTMLLIElement {
+    const li = document.createElement("li");
+    li.dataset.linkId = link.id;
+    li.dataset.shortUrl = link.shortUrl;
+    li.className = "p-0";
+
+    const wrap = document.createElement("div");
+    wrap.className = "flex flex-col gap-3 px-4 py-4";
+
+    const head = document.createElement("div");
+    head.className = "flex flex-col gap-0.5";
+    const shortLink = document.createElement("a");
+    shortLink.className = "text-sm font-medium text-[var(--color-primary)]";
+    shortLink.href = link.shortUrl;
+    shortLink.target = "_blank";
+    shortLink.rel = "noopener noreferrer";
+    shortLink.textContent = link.shortUrl;
+    const dest = document.createElement("span");
+    dest.className = "block truncate text-xs text-[var(--color-text-muted)]";
+    dest.title = link.destination;
+    dest.textContent = link.destination;
+    head.append(shortLink, dest);
+
+    const foot = document.createElement("div");
+    foot.className = "flex flex-wrap items-center justify-between gap-3";
+    const meta = document.createElement("span");
+    meta.className = "text-xs text-[var(--color-text-muted)]";
+    meta.textContent = `${link.clicks} clicks · ${formatDate(link.createdAt)}`;
+    foot.appendChild(meta);
+    if (mobileActionsTpl) {
+      const actions = mobileActionsTpl.content.cloneNode(true) as DocumentFragment;
+      setAnalyticsHref(actions, link.id);
+      foot.appendChild(actions);
+    }
+
+    wrap.append(head, foot);
+    li.appendChild(wrap);
+    return li;
+  }
+
+  function renderLinks(links: ShortUrl[]) {
+    tbodyEl?.replaceChildren(...links.map(buildDesktopRow));
+    mobileEl?.replaceChildren(...links.map(buildMobileCard));
+  }
+
+  function renderPagination(meta: PaginationMeta) {
+    const show = meta.totalPages > 1;
+
+    if (paginationEl) {
+      paginationEl.classList.toggle("hidden", !show);
+      paginationEl.classList.toggle("flex", show);
+    }
+    if (prevEl) prevEl.disabled = !meta.hasPrevPage;
+    if (nextEl) nextEl.disabled = !meta.hasNextPage;
+    if (pageInfoEl) {
+      pageInfoEl.textContent = `Page ${meta.page} of ${meta.totalPages}`;
+    }
+  }
+
+  async function load(page: number) {
+    if (isLoading) return;
+    isLoading = true;
+    hideAll();
+    setHidden(loadingEl, false);
+
+    try {
+      const { links, meta } = await getUserUrls(page, PAGE_LIMIT);
+
+      if (links.length === 0 && page > 1) {
+        isLoading = false;
+        await load(page - 1);
+        return;
+      }
+
+      currentPage = meta.page;
+      setHidden(loadingEl, true);
+
+      if (links.length === 0) {
+        renderLinks([]);
+        setHidden(emptyEl, false);
+      } else {
+        renderLinks(links);
+        setHidden(dataEl, false);
+      }
+      renderPagination(meta);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        hideAll();
+        window.dispatchEvent(new Event("nx:auth-required"));
+        return;
+      }
+
+      if (errorMessageEl) {
+        errorMessageEl.textContent = err instanceof Error ? err.message : "Could not load your links.";
+      }
+      setHidden(errorEl, false);
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  retryEl?.addEventListener("click", () => load(currentPage));
+  prevEl?.addEventListener("click", () => load(currentPage - 1));
+  nextEl?.addEventListener("click", () => load(currentPage + 1));
+
+  function openDeleteModal(id: string) {
+    pendingDeleteId = id;
+    if (deleteErrorEl) {
+      deleteErrorEl.textContent = "";
+      deleteErrorEl.classList.add("hidden");
+    }
+    deleteModal?.showModal();
+  }
+
+  // Copy the row's short URL to the clipboard.
+  dataEl?.addEventListener("click", async (event) => {
+    const trigger = (event.target as HTMLElement).closest<HTMLElement>("[data-copy-link]");
+    if (!trigger) return;
+
+    const row = trigger.closest("[data-link-id]") as HTMLElement | null;
+    const shortUrl = row?.dataset.shortUrl;
+    if (!shortUrl) return;
+
+    const label = trigger.querySelector<HTMLElement>("[data-action-label]");
+
+    try {
+      await navigator.clipboard.writeText(shortUrl);
+      if (label) label.textContent = "Copied!";
+    } catch {
+      if (label) label.textContent = "Copy failed";
+    }
+
+    window.clearTimeout(copyResetTimer);
+    copyResetTimer = window.setTimeout(() => {
+      if (label) label.textContent = "Copy";
+    }, 2000);
+  });
+
+  // Open the confirmation when any row's Delete action is clicked.
+  dataEl?.addEventListener("click", (event) => {
+    const trigger = (event.target as HTMLElement).closest("[data-delete-link]");
+    if (!trigger) return;
+
+    const row = trigger.closest("[data-link-id]") as HTMLElement | null;
+    const id = row?.dataset.linkId;
+    if (id) openDeleteModal(id);
+  });
+
+  deleteConfirmEl?.addEventListener("click", async () => {
+    if (!pendingDeleteId || isDeleting) return;
+
+    isDeleting = true;
+    deleteConfirmEl.disabled = true;
+    deleteConfirmEl.textContent = "Deleting…";
+    if (deleteErrorEl) {
+      deleteErrorEl.textContent = "";
+      deleteErrorEl.classList.add("hidden");
+    }
+
+    try {
+      await deleteShortUrl(pendingDeleteId);
+      deleteModal?.close();
+      pendingDeleteId = "";
+      window.dispatchEvent(new Event("nx:link-deleted"));
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        deleteModal?.close();
+        window.dispatchEvent(new Event("nx:auth-required"));
+        return;
+      }
+
+      if (deleteErrorEl) {
+        deleteErrorEl.textContent = err instanceof Error ? err.message : "Could not delete the link.";
+        deleteErrorEl.classList.remove("hidden");
+      }
+    } finally {
+      isDeleting = false;
+      if (deleteConfirmEl) {
+        deleteConfirmEl.disabled = false;
+        deleteConfirmEl.textContent = "Delete";
+      }
+    }
+  });
+
+  // Refresh (back to the first page) when a new link is created.
+  window.addEventListener("nx:link-created", () => {
+    void load(1);
+  });
+
+  // Re-fetch the current page when a link is deleted.
+  window.addEventListener("nx:link-deleted", () => {
+    void load(currentPage);
+  });
+
+  load(1);
+</script>

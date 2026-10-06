@@ -8,16 +8,33 @@ import UrlForm from "@/components/links/UrlForm.astro";
 ---
 
 <Layout
-  title="Dashboard — NexURL"
+  title="Dashboard — HyperLink"
   description="Manage your short links and track their performance."
 >
-  <div class="flex min-h-screen bg-[var(--color-background)]">
+  <div class="flex min-h-screen flex-col lg:flex-row">
     <Sidebar active="dashboard" />
 
     <div class="min-w-0 flex-1">
       <main class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <!-- Dashboard header -->
         <DashboardHeader />
+
+        <!-- Auth required state (shown when the dashboard API returns 401) -->
+        <div
+          id="dashboard-auth"
+          class="mt-6 hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
+          role="status"
+        >
+          <p class="m-0 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+            You are not signed in, or your session has expired. Please
+            <a
+              href="/login"
+              class="font-medium text-[var(--color-primary)] transition-colors duration-200 hover:text-[var(--color-primary-light)]"
+              >log in</a
+            >
+            to view your links and stats.
+          </p>
+        </div>
 
         <!-- Create link area -->
         <div id="create-link" class="mt-8 scroll-mt-24">
@@ -42,7 +59,16 @@ import UrlForm from "@/components/links/UrlForm.astro";
   document.querySelectorAll("[data-scroll-to]").forEach((button) => {
     button.addEventListener("click", () => {
       const target = document.getElementById(button.getAttribute("data-scroll-to") || "");
-      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (!target) return;
+
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Focus the first field so the action has a visible effect.
+      target.querySelector<HTMLElement>("input, textarea, select")?.focus({ preventScroll: true });
     });
+  });
+
+  // Shown when any dashboard API call reports an unauthenticated session.
+  window.addEventListener("nx:auth-required", () => {
+    document.getElementById("dashboard-auth")?.classList.remove("hidden");
   });
 </script>

@@ -2,20 +2,65 @@
 import Button from "@/components/common/Button.astro";
 ---
 
-<div class="flex flex-wrap items-center justify-between gap-4">
-  <div>
-    <h1 class="m-0 text-2xl font-semibold tracking-tight text-[var(--color-text-primary)]">
-      Dashboard
-    </h1>
-    <p class="mt-1 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
-      Manage your short links and track their performance.
-    </p>
+<div>
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h1 class="m-0 text-2xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-3xl">
+        Welcome back <span class="text-[var(--color-primary)]">&#x1F44B;</span>
+      </h1>
+      <p class="mt-1 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
+        Here's your link activity at a glance.
+      </p>
+    </div>
+
+    <div class="flex w-full items-center gap-2 sm:w-auto">
+      <Button variant="primary" type="button" data-scroll-to="create-link" class="gap-1.5">
+        <svg viewBox="0 0 16 16" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M8 3v10M3 8h10" />
+        </svg>
+        Shorten URL
+      </Button>
+
+      <Button id="logout-button" variant="secondary" type="button">
+        Log out
+      </Button>
+    </div>
   </div>
 
-  <Button variant="primary" type="button" data-scroll-to="create-link">
-    <svg viewBox="0 0 16 16" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-      <path d="M8 3v10M3 8h10" />
-    </svg>
-    Create Link
-  </Button>
+  <p
+    id="logout-error"
+    class="mt-3 hidden text-sm text-[var(--color-danger)]"
+    role="alert"
+  ></p>
 </div>
+
+<script>
+  import { logout } from "@/api/auth.api";
+
+  const button = document.getElementById("logout-button") as HTMLButtonElement | null;
+  const errorEl = document.getElementById("logout-error") as HTMLParagraphElement | null;
+  const LABEL = "Log out";
+  let isSubmitting = false;
+
+  button?.addEventListener("click", async () => {
+    if (isSubmitting) return;
+    isSubmitting = true;
+
+    button.disabled = true;
+    button.textContent = "Logging out…";
+
+    try {
+      await logout();
+      window.location.href = "/";
+    } catch (err) {
+      isSubmitting = false;
+      button.disabled = false;
+      button.textContent = LABEL;
+      if (errorEl) {
+        errorEl.textContent =
+          err instanceof Error ? err.message : "Could not log out. Please try again.";
+        errorEl.classList.remove("hidden");
+      }
+    }
+  });
+</script>

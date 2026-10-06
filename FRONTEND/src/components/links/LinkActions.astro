@@ -24,31 +24,50 @@ const baseAction = [
   "focus-visible:ring-2",
   "focus-visible:ring-[var(--color-border-active)]",
 ].join(" ");
+
+// Destructive action — visually distinct but consistent with the theme.
+const dangerAction = [
+  "inline-flex",
+  "items-center",
+  "gap-1.5",
+  "rounded-lg",
+  "px-2.5",
+  "py-1.5",
+  "text-xs",
+  "font-medium",
+  "text-[var(--color-danger)]",
+  "transition-colors",
+  "duration-200",
+  "hover:bg-[rgba(248,113,113,0.08)]",
+  "focus-visible:outline-none",
+  "focus-visible:ring-2",
+  "focus-visible:ring-[var(--color-border-active)]",
+].join(" ");
 ---
 
-<!-- Ghost-style row actions. No API wired yet — visual affordances only. -->
+<!-- Row actions: Copy, Analytics (per-link), Delete. -->
 <div class:list={["flex items-center gap-1", className]}>
-  <button type="button" class={baseAction} aria-label="Copy short URL" disabled title="Coming soon">
+  <button type="button" class={baseAction} aria-label="Copy short URL" title="Copy short URL" data-copy-link>
     <svg viewBox="0 0 16 16" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <rect x="6" y="6" width="7" height="7" rx="1.5" />
       <path d="M10 6V4.5A1.5 1.5 0 0 0 8.5 3h-5A1.5 1.5 0 0 0 2 4.5v5A1.5 1.5 0 0 0 3.5 11H6" />
     </svg>
-    Copy
+    <span data-action-label>Copy</span>
   </button>
 
-  <button type="button" class={baseAction} aria-label="View analytics" disabled title="Coming soon">
+  <a href="/analytics" class={baseAction} aria-label="View analytics" title="View analytics" data-analytics-link>
     <svg viewBox="0 0 16 16" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M3 13V8M8 13V3M13 13v-3" />
     </svg>
     Analytics
-  </button>
+  </a>
 
-  <button type="button" class={baseAction} aria-label="More actions" disabled title="Coming soon">
-    <svg viewBox="0 0 16 16" class="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
-      <circle cx="8" cy="3.5" r="1.4" />
-      <circle cx="8" cy="8" r="1.4" />
-      <circle cx="8" cy="12.5" r="1.4" />
+  <button type="button" class={dangerAction} aria-label="Delete link" title="Delete link" data-delete-link>
+    <svg viewBox="0 0 16 16" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 5h10" />
+      <path d="M6 5V3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5V5" />
+      <path d="M4.5 5l.5 8a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1l.5-8" />
     </svg>
-    More
+    Delete
   </button>
 </div>

@@ -1,12 +1,11 @@
 ---
 import Button from "@/components/common/Button.astro";
-import GlassCard from "@/components/common/GlassCard.astro";
 import Input from "@/components/common/Input.astro";
 ---
 
-<GlassCard glow padding="lg" class="w-full max-w-md">
+<div class="w-full max-w-md">
   <!-- Wordmark -->
-  <a href="/" class="inline-flex items-center gap-2 text-[var(--color-text-primary)]" aria-label="NexURL home">
+  <a href="/" class="inline-flex items-center gap-2 text-[var(--color-text-primary)]" aria-label="HyperLink home">
     <span
       class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--gradient-primary)] text-sm font-bold text-[#0b0b10]"
       aria-hidden="true"
@@ -14,8 +13,8 @@ import Input from "@/components/common/Input.astro";
       N
     </span>
     <span class="text-lg font-semibold tracking-tight">
-      <span class="font-light">Nex</span>
-      <span class="gradient-text font-semibold">URL</span>
+      <span class="font-light">Hyper</span>
+      <span class="gradient-text font-semibold">Link</span>
     </span>
   </a>
 
@@ -24,7 +23,7 @@ import Input from "@/components/common/Input.astro";
     Create your account
   </h1>
   <p class="mt-2 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
-    Start creating and managing short links with NexURL.
+    Start creating and managing short links with HyperLink.
   </p>
 
   <!-- Form -->
@@ -57,6 +56,7 @@ import Input from "@/components/common/Input.astro";
       placeholder="Create a password"
       autocomplete="new-password"
       required
+      togglePassword
     />
 
     <Input
@@ -67,6 +67,7 @@ import Input from "@/components/common/Input.astro";
       placeholder="Repeat your password"
       autocomplete="new-password"
       required
+      togglePassword
     />
 
     <p
@@ -77,17 +78,15 @@ import Input from "@/components/common/Input.astro";
       Passwords do not match.
     </p>
 
-    <Button type="submit" fullWidth size="lg" class="mt-1">
+    <Button type="submit" fullWidth size="lg" class="mt-1" id="signup-submit">
       Create Account
     </Button>
 
     <p
-      id="signup-status"
-      class="m-0 hidden text-center text-sm text-[var(--color-text-muted)]"
-      role="status"
-    >
-      Account creation isn&rsquo;t connected to a backend yet — nothing was submitted.
-    </p>
+      id="signup-error"
+      class="m-0 hidden text-center text-sm text-[var(--color-danger)]"
+      role="alert"
+    ></p>
   </form>
 
   <!-- Footer -->
@@ -102,36 +101,85 @@ import Input from "@/components/common/Input.astro";
       </a>
     </p>
   </div>
-</GlassCard>
+</div>
 
 <script>
-  const form = document.getElementById("signup-form");
-  const status = document.getElementById("signup-status");
-  const matchError = document.getElementById("signup-match-error");
-  const password = document.getElementById("signup-password") as HTMLInputElement | null;
-  const confirm = document.getElementById("signup-confirm") as HTMLInputElement | null;
+  import { register } from "@/api/auth.api";
+  import { initPasswordToggles } from "@/utils/passwordToggle";
 
-  form?.addEventListener("submit", (event) => {
-    // Client-side check before anything else.
-    const mismatch = Boolean(password && confirm && password.value !== confirm.value);
-    if (mismatch) {
-      event.preventDefault();
-      matchError?.classList.remove("hidden");
-      confirm?.focus();
+  initPasswordToggles();
+
+  const form = document.getElementById("signup-form") as HTMLFormElement | null;
+  const nameInput = document.getElementById("signup-name") as HTMLInputElement | null;
+  const emailInput = document.getElementById("signup-email") as HTMLInputElement | null;
+  const passwordInput = document.getElementById("signup-password") as HTMLInputElement | null;
+  const confirmInput = document.getElementById("signup-confirm") as HTMLInputElement | null;
+  const submitButton = document.getElementById("signup-submit") as HTMLButtonElement | null;
+  const errorEl = document.getElementById("signup-error") as HTMLParagraphElement | null;
+  const matchError = document.getElementById("signup-match-error");
+
+  const SUBMIT_LABEL = "Create Account";
+  let isSubmitting = false;
+
+  function showError(message: string) {
+    if (!errorEl) return;
+    errorEl.textContent = message;
+    errorEl.classList.remove("hidden");
+  }
+
+  function clearError() {
+    if (!errorEl) return;
+    errorEl.textContent = "";
+    errorEl.classList.add("hidden");
+  }
+
+  function setLoading(isLoading: boolean) {
+    isSubmitting = isLoading;
+    if (!submitButton) return;
+    submitButton.disabled = isLoading;
+    submitButton.textContent = isLoading ? "Creating account…" : SUBMIT_LABEL;
+  }
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (isSubmitting) return;
+
+    clearError();
+
+    const name = nameInput?.value.trim() ?? "";
+    const email = emailInput?.value.trim() ?? "";
+    const password = passwordInput?.value ?? "";
+    const confirmPassword = confirmInput?.value ?? "";
+
+    if (!name || !email || !password) {
+      showError("Please fill in all fields.");
       return;
     }
 
-    // No backend API contract yet — prevent navigation and inform the user.
-    event.preventDefault();
+    if (password !== confirmPassword) {
+      matchError?.classList.remove("hidden");
+      confirmInput?.focus();
+      return;
+    }
     matchError?.classList.add("hidden");
-    if (status) {
-      status.classList.remove("hidden");
-      window.setTimeout(() => status.classList.add("hidden"), 4000);
+
+    setLoading(true);
+
+    try {
+      await register(name, email, password);
+      window.location.href = "/dashboard";
+    } catch (err) {
+      showError(
+        err instanceof Error
+          ? err.message
+          : "Could not create your account. Please try again.",
+      );
+      setLoading(false);
     }
   });
 
   // Clear the mismatch error as the user types.
-  confirm?.addEventListener("input", () => {
+  confirmInput?.addEventListener("input", () => {
     matchError?.classList.add("hidden");
   });
 </script>

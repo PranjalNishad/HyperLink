@@ -1,6 +1,16 @@
 import type { Context } from "hono";
-import { createShortUrlWithUser, createShortUrlWithoutUser } from "@/services/short_url.service";
+import {
+  createShortUrlWithUser,
+  createShortUrlWithoutUser,
+  getDashboardStats,
+  getUserShortUrls,
+  getAnalyticsOverview,
+  getTopLinks,
+  getLinkAnalytics,
+  removeUserLink,
+} from "@/services/short_url.service";
 import { getShortUrl } from "@/dao/short_url.dao";
+import { UnauthorizedError, NotFoundError } from "@/utils/errorHandler";
 import wrapAsync from "@/utils/tryCatchWrapper";
 
 export const createShortUrl = wrapAsync(async (c: Context) => {
@@ -32,4 +42,79 @@ export const redirectFromShortUrl = wrapAsync(async (c: Context) => {
   }
 
   return c.redirect(url.full_url);
+});
+
+export const getUserStats = wrapAsync(async (c: Context) => {
+  const user = c.get("user");
+  if (!user) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+
+  const data = await getDashboardStats(user._id);
+  return c.json({ success: true, data });
+});
+
+export const getUserUrls = wrapAsync(async (c: Context) => {
+  const user = c.get("user");
+  if (!user) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+
+  const { links, meta } = await getUserShortUrls(
+    user._id,
+    c.req.query("page"),
+    c.req.query("limit"),
+  );
+
+  return c.json({ success: true, data: { links }, meta });
+});
+
+export const getUserAnalytics = wrapAsync(async (c: Context) => {
+  const user = c.get("user");
+  if (!user) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+
+  const data = await getAnalyticsOverview(user._id);
+  return c.json({ success: true, data });
+});
+
+export const getUserTopLinks = wrapAsync(async (c: Context) => {
+  const user = c.get("user");
+  if (!user) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+
+  const links = await getTopLinks(user._id, c.req.query("limit"));
+  return c.json({ success: true, data: { links } });
+});
+
+export const getUserLinkAnalytics = wrapAsync(async (c: Context) => {
+  const user = c.get("user");
+  if (!user) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+
+  const id = c.req.param("id");
+  if (!id) {
+    throw new NotFoundError("Short URL not found");
+  }
+
+  const data = await getLinkAnalytics(user._id, id);
+  return c.json({ success: true, data });
+});
+
+export const deleteUserLink = wrapAsync(async (c: Context) => {
+  const user = c.get("user");
+  if (!user) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+
+  const id = c.req.param("id");
+  if (!id) {
+    throw new NotFoundError("Short URL not found");
+  }
+
+  await removeUserLink(user._id, id);
+  return c.json({ success: true, message: "Link deleted successfully" });
 });

@@ -1,0 +1,132 @@
+---
+---
+
+<section
+  id="link-details"
+  class="premium-card flex h-full flex-col p-6"
+>
+  <h2 class="m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]">
+    Link Details
+  </h2>
+
+  <p
+    id="link-details-empty"
+    class="m-0 mt-3 text-sm leading-relaxed text-[var(--color-text-muted)]"
+  >
+    Select a link from Top Links to view its cumulative analytics.
+  </p>
+
+  <p
+    id="link-details-loading"
+    class="m-0 mt-3 hidden text-sm text-[var(--color-text-muted)]"
+    role="status"
+  >
+    Loading&hellip;
+  </p>
+
+  <p
+    id="link-details-error"
+    class="m-0 mt-3 hidden text-sm text-[var(--color-danger)]"
+    role="alert"
+  ></p>
+
+  <dl id="link-details-content" class="m-0 mt-4 hidden flex-col gap-4">
+    <div class="min-w-0">
+      <dt class="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Short URL</dt>
+      <dd class="m-0 mt-1 min-w-0">
+        <a
+          id="ld-short-url"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="block truncate text-sm font-medium text-[var(--color-primary)] transition-colors hover:text-[var(--color-primary-light)]"
+        ></a>
+      </dd>
+    </div>
+
+    <div class="min-w-0">
+      <dt class="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Destination</dt>
+      <dd id="ld-destination" class="m-0 mt-1 block truncate text-sm text-[var(--color-text-secondary)]"></dd>
+    </div>
+
+    <div class="flex items-center justify-between gap-4">
+      <div>
+        <dt class="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Clicks</dt>
+        <dd id="ld-clicks" class="m-0 mt-1 font-mono text-sm text-[var(--color-text-primary)]"></dd>
+      </div>
+      <div class="text-right">
+        <dt class="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Created</dt>
+        <dd id="ld-created" class="m-0 mt-1 text-sm text-[var(--color-text-muted)]"></dd>
+      </div>
+    </div>
+  </dl>
+</section>
+
+<script>
+  import { getLinkAnalytics } from "@/api/analytics.api";
+  import { ApiError } from "@/api/client";
+
+  const emptyEl = document.getElementById("link-details-empty");
+  const loadingEl = document.getElementById("link-details-loading");
+  const errorEl = document.getElementById("link-details-error");
+  const contentEl = document.getElementById("link-details-content");
+  const shortUrlEl = document.getElementById("ld-short-url") as HTMLAnchorElement | null;
+  const destinationEl = document.getElementById("ld-destination");
+  const clicksEl = document.getElementById("ld-clicks");
+  const createdEl = document.getElementById("ld-created");
+
+  function show(state: "empty" | "loading" | "error" | "content") {
+    emptyEl?.classList.toggle("hidden", state !== "empty");
+    loadingEl?.classList.toggle("hidden", state !== "loading");
+    errorEl?.classList.toggle("hidden", state !== "error");
+    contentEl?.classList.toggle("hidden", state !== "content");
+    contentEl?.classList.toggle("flex", state === "content");
+  }
+
+  function formatDate(iso: string): string {
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return "—";
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  async function load(id: string) {
+    show("loading");
+
+    try {
+      const link = await getLinkAnalytics(id);
+
+      if (shortUrlEl) {
+        shortUrlEl.href = link.shortUrl;
+        shortUrlEl.textContent = link.shortUrl;
+      }
+      if (destinationEl) {
+        destinationEl.textContent = link.destination;
+        destinationEl.title = link.destination;
+      }
+      if (clicksEl) clicksEl.textContent = String(link.clicks);
+      if (createdEl) createdEl.textContent = formatDate(link.createdAt);
+
+      show("content");
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        show("empty");
+        window.dispatchEvent(new Event("nx:auth-required"));
+        return;
+      }
+
+      if (errorEl) {
+        errorEl.textContent = err instanceof Error ? err.message : "Could not load link details.";
+      }
+      show("error");
+    }
+  }
+
+  window.addEventListener("nx:select-link", (event) => {
+    const id = (event as CustomEvent<{ id?: string }>).detail?.id;
+    if (id) void load(id);
+  });
+</script>

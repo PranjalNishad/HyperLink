@@ -1,0 +1,125 @@
+---
+interface Metric {
+  key: "totalLinks" | "totalClicks" | "linksWithClicks";
+  label: string;
+  accent: string;
+  icon: string;
+}
+
+const metrics: Metric[] = [
+  {
+    key: "totalLinks",
+    label: "Total Links",
+    accent: "text-[var(--color-primary)]",
+    icon: '<path d="M9.5 14.5 14.5 9.5" /><path d="M8 12.5 5.5 15a3 3 0 0 0 4.2 4.2L12 16.7" /><path d="M16 11.5l2.5-2.5a3 3 0 0 0-4.2-4.2L12 7.3" />',
+  },
+  {
+    key: "totalClicks",
+    label: "Total Clicks",
+    accent: "text-[var(--color-secondary)]",
+    icon: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />',
+  },
+  {
+    key: "linksWithClicks",
+    label: "Links With Clicks",
+    accent: "text-[var(--color-success)]",
+    icon: '<circle cx="12" cy="12" r="8" /><path d="m8.5 12 2.5 2.5 4.5-5" />',
+  },
+];
+---
+
+<ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-3">
+  {
+    metrics.map((metric) => (
+      <li class="p-0">
+        <div class="premium-card p-5">
+          <div class="flex items-center justify-between gap-3">
+            <span class="text-xs font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">
+              {metric.label}
+            </span>
+            <span
+              class:list={[
+                "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+                "bg-[var(--gradient-primary-soft)]",
+                metric.accent,
+              ]}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                class="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                set:html={metric.icon}
+              />
+            </span>
+          </div>
+          <p
+            class="mt-4 m-0 font-mono text-3xl font-semibold tracking-tight text-[var(--color-text-primary)]"
+            data-metric={metric.key}
+            aria-busy="true"
+          >
+            <span
+              class="inline-block h-7 w-14 animate-pulse rounded bg-[var(--color-surface-hover)]"
+              data-metric-skeleton
+              aria-hidden="true"
+            ></span>
+          </p>
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<p
+  id="analytics-stats-error"
+  class="m-0 mt-3 hidden text-sm text-[var(--color-danger)]"
+  role="alert"
+></p>
+
+<script>
+  import { getAnalyticsOverview } from "@/api/analytics.api";
+  import { ApiError } from "@/api/client";
+
+  const errorEl = document.getElementById("analytics-stats-error");
+
+  function setValue(key: string, value: number) {
+    const el = document.querySelector<HTMLElement>(`[data-metric="${key}"]`);
+    if (!el) return;
+    el.textContent = String(value);
+    el.setAttribute("aria-busy", "false");
+  }
+
+  function setAllUnavailable() {
+    document.querySelectorAll<HTMLElement>("[data-metric]").forEach((el) => {
+      el.textContent = "—";
+      el.setAttribute("aria-busy", "false");
+    });
+  }
+
+  async function load() {
+    try {
+      const overview = await getAnalyticsOverview();
+      setValue("totalLinks", overview.totalLinks);
+      setValue("totalClicks", overview.totalClicks);
+      setValue("linksWithClicks", overview.linksWithClicks);
+    } catch (err) {
+      setAllUnavailable();
+
+      if (err instanceof ApiError && err.status === 401) {
+        window.dispatchEvent(new Event("nx:auth-required"));
+        return;
+      }
+
+      if (errorEl) {
+        errorEl.textContent = err instanceof Error ? err.message : "Could not load analytics.";
+        errorEl.classList.remove("hidden");
+      }
+    }
+  }
+
+  load();
+</script>

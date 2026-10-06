@@ -1,88 +1,83 @@
 ---
-import GlassCard from "@/components/common/GlassCard.astro";
-
 const features = [
   {
-    index: "01",
-    id: "features",
-    title: "Lightning Fast",
-    description:
-      "Generate short links quickly with a lightweight and efficient system.",
-    icon: "bolt",
-    accent: "text-[var(--color-primary)]",
-    gradient: "bg-[var(--gradient-primary-soft)]",
+    title: "URL Shortening",
+    description: "Convert long URLs into short, clean links that are easy to share.",
+    icon: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72" />',
   },
   {
-    index: "02",
+    title: "Custom URLs",
+    description: "Create branded or custom short links with your own memorable slugs.",
+    icon: '<path d="m9.5 14.5 5-5" /><path d="M8 12.5 5.5 15a3 3 0 0 0 4.2 4.2L12 16.7" /><path d="M16 11.5 18.5 9a3 3 0 0 0-4.2-4.2L12 7.3" />',
+  },
+  {
     id: "analytics",
-    title: "Smart Analytics",
-    description:
-      "Understand clicks and link performance with useful analytics.",
-    icon: "chart",
-    accent: "text-[var(--color-secondary)]",
-    gradient: "bg-[var(--gradient-primary-soft)]",
+    title: "Analytics",
+    description: "Track total clicks and link performance with cumulative analytics.",
+    icon: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />',
   },
   {
-    index: "03",
-    id: "",
-    title: "Simple Management",
-    description:
-      "Keep all your shortened links organized in one place.",
-    icon: "folder",
-    accent: "text-[var(--color-accent)]",
-    gradient: "bg-[var(--gradient-primary-soft)]",
+    title: "Redirects",
+    description: "Fast and secure redirection from short links to destination URLs.",
+    icon: '<path d="M5 12h14M13 6l6 6-6 6" />',
+  },
+  {
+    title: "User Sign In / Sign Up",
+    description: "Save and manage your links with a personal HyperLink account.",
+    icon: '<circle cx="12" cy="8" r="4" /><path d="M5 20c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" />',
+  },
+  {
+    title: "Beautiful & Simple UI",
+    description: "Clean, modern, and minimal design focused on what matters.",
+    icon: '<path d="M12 2 2 7l10 5 10-5-10-5Z" /><path d="m2 17 10 5 10-5" /><path d="M2 12 12 17l10-5" />',
   },
 ];
-
-const icons: Record<string, string> = {
-  bolt: '<path d="M9 2 4 9h4l-1 5 5-7h-4l1-5z" />',
-  chart: '<path d="M4 13v3M8 9v7M12 5v11M16 11v5" />',
-  folder: '<path d="M2.5 5.5h4l1.5-1.5h5.5a1 1 0 0 1 1 1v1h-12z" /><path d="M2.5 5.5V12a1.5 1.5 0 0 0 1.5 1.5h8a1.5 1.5 0 0 0 1.5-1.5V6.5" />',
-};
 ---
 
-<section class="container-page px-4 py-20 md:py-28">
+<section class="container-page px-4 py-20 md:py-28" id="features">
   <div class="mx-auto max-w-2xl text-center">
-    <h2 class="m-0 text-2xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-3xl md:text-4xl">
-      Everything you need for better links.
+    <span class="text-xs font-semibold uppercase tracking-widest text-[var(--color-primary)]">Features</span>
+    <h2 class="mt-3 m-0 text-3xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-4xl">
+      Everything you need for <span class="gradient-text">better links</span>
     </h2>
-    <p class="mx-auto mt-3 max-w-md text-base leading-relaxed text-[var(--color-text-muted)]">
-      Simple tools for creating, managing, and understanding every link you
-      share.
+    <p class="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[var(--color-text-muted)]">
+      Simple tools for creating, managing, and understanding every link you share.
     </p>
   </div>
 
-  <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+  <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     {
       features.map((feature) => (
-        <div id={feature.id || undefined} class={feature.id ? "scroll-mt-24" : ""}>
-          <GlassCard hover class="h-full">
-            <div class="flex items-start justify-between gap-4">
-              <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--gradient-primary-soft)]">
-                <svg
-                  viewBox="0 0 24 24"
-                  class:list={["h-5 w-5", feature.accent]}
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  set:html={icons[feature.icon]}
-                />
-              </div>
-              <span class="font-mono text-sm font-medium text-[var(--color-text-subtle)]">
-                {feature.index}
-              </span>
+        <div
+          id={feature.id}
+          class:list={[
+            "group rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-panel)] p-5 backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--glass-border-hover)] hover:shadow-[var(--shadow-glow)]",
+            feature.id && "scroll-mt-24",
+          ]}
+        >
+          <div class="flex items-start gap-4">
+            <div class="icon-gradient group-hover:shadow-[0_0_24px_rgba(255,138,101,0.18)]">
+              <svg
+                viewBox="0 0 24 24"
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                set:html={feature.icon}
+              />
             </div>
-
-            <h3 class="mt-5 m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]">
-              {feature.title}
-            </h3>
-            <p class="mt-2 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
-              {feature.description}
-            </p>
-          </GlassCard>
+            <div class="min-w-0">
+              <h3 class="m-0 text-base font-semibold tracking-tight text-[var(--color-text-primary)]">
+                {feature.title}
+              </h3>
+              <p class="mt-1 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
+                {feature.description}
+              </p>
+            </div>
+          </div>
         </div>
       ))
     }

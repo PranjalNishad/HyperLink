@@ -54,7 +54,7 @@ const sizeClasses: Record<string, string> = {
   <div class:list={["nx-modal-panel", className]}>
     {
       hasHeader && (
-        <header class="flex shrink-0 items-start justify-between gap-4 px-6 pt-6">
+        <header class="flex shrink-0 items-start justify-between gap-4 px-6 pt-6 sm:px-8 sm:pt-7">
           {
             (hasTitle || hasDescription) && (
               <div class="min-w-0">
@@ -62,7 +62,7 @@ const sizeClasses: Record<string, string> = {
                   hasTitle && (
                     <h2
                       id={titleId}
-                      class="m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]"
+                      class="m-0 text-xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-[1.375rem]"
                     >
                       {title}
                     </h2>
@@ -72,7 +72,7 @@ const sizeClasses: Record<string, string> = {
                   hasDescription && (
                     <p
                       id={descriptionId}
-                      class="m-0 mt-1 text-sm leading-relaxed text-[var(--color-text-muted)]"
+                      class="m-0 mt-2 text-[0.9375rem] leading-relaxed text-[var(--color-text-muted)]"
                     >
                       {description}
                     </p>
@@ -87,7 +87,7 @@ const sizeClasses: Record<string, string> = {
                 type="button"
                 data-modal-close
                 aria-label="Close"
-                class="ml-auto inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--color-text-muted)] transition-colors hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+                class="ml-auto inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[var(--color-text-muted)] transition-colors hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -109,13 +109,13 @@ const sizeClasses: Record<string, string> = {
       )
     }
 
-    <div class="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+    <div class="min-h-0 flex-1 overflow-y-auto px-6 py-5 sm:px-8 sm:py-6">
       <slot />
     </div>
 
     {
       hasFooter && (
-        <footer class="flex shrink-0 flex-wrap items-center justify-end gap-3 border-t border-[var(--color-border-soft)] px-6 py-4">
+        <footer class="nx-modal-footer flex shrink-0 flex-wrap items-center justify-end gap-3 border-t border-[var(--color-border-soft)] px-6 py-4 sm:px-8 sm:py-5">
           <slot name="footer" />
         </footer>
       )
@@ -136,8 +136,7 @@ const sizeClasses: Record<string, string> = {
   }
 
   dialog.nx-modal::backdrop {
-    background: var(--color-background);
-    opacity: 0.6;
+    background: var(--modal-backdrop);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
   }
@@ -167,11 +166,25 @@ const sizeClasses: Record<string, string> = {
     width: 100%;
     max-height: inherit;
     overflow: hidden;
+
+    border-radius: 22px;
+    border: 1px solid var(--modal-border);
+    background: var(--modal-surface);
+    box-shadow: var(--modal-shadow);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   /* Lock page scrolling while any modal is open. */
   body:has(dialog.nx-modal[open]) {
     overflow: hidden;
+  }
+
+  /* Stack and stretch the action buttons on very narrow screens. */
+  @media (max-width: 640px) {
+    .nx-modal-footer > * {
+      flex: 1 1 auto;
+    }
   }
 
   @keyframes nx-modal-in {
