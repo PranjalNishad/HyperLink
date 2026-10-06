@@ -80,17 +80,17 @@ import Modal from "@/components/common/Modal.astro";
   <!-- Data -->
   <div
     id="recent-links-data"
-    class="hidden overflow-hidden rounded-xl border border-[var(--glass-border)] bg-[var(--glass-panel)] backdrop-blur-xl"
+    class="hidden overflow-x-auto rounded-xl border border-[var(--glass-border)] bg-[var(--glass-panel)] backdrop-blur-xl"
   >
     <!-- Desktop table (only once the content area is wide enough) -->
-    <table class="hidden w-full table-fixed border-collapse text-left xl:table">
+    <table class="hidden w-full min-w-[64rem] table-fixed border-collapse text-left xl:table">
       <thead>
         <tr class="border-b border-[var(--glass-border)] bg-[var(--glass-background)]">
-          <th class="w-[28%] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Short URL</th>
-          <th class="w-[28%] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Original URL</th>
+          <th class="w-[23%] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Short URL</th>
+          <th class="w-[23%] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Original URL</th>
           <th class="w-[10%] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Clicks</th>
-          <th class="w-[14%] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Created</th>
-          <th class="w-[20%] px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Actions</th>
+          <th class="w-[16%] px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Created</th>
+          <th class="w-[28%] px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Actions</th>
         </tr>
       </thead>
       <tbody id="recent-links-tbody"></tbody>
@@ -221,11 +221,11 @@ import Modal from "@/components/common/Modal.astro";
     clicksTd.textContent = String(link.clicks);
 
     const createdTd = document.createElement("td");
-    createdTd.className = "px-5 py-4 text-sm text-[var(--color-text-muted)]";
+    createdTd.className = "whitespace-nowrap px-5 py-4 text-sm text-[var(--color-text-muted)]";
     createdTd.textContent = formatDate(link.createdAt);
 
     const actionsTd = document.createElement("td");
-    actionsTd.className = "px-5 py-4";
+    actionsTd.className = "whitespace-nowrap px-5 py-4";
     if (desktopActionsTpl) {
       const actions = desktopActionsTpl.content.cloneNode(true) as DocumentFragment;
       setAnalyticsHref(actions, link.id);
