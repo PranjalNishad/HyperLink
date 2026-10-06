@@ -8,10 +8,10 @@ import {
   getTopLinks,
   getLinkAnalytics,
   removeUserLink,
-} from "../services/short_url.service";
-import { getShortUrl } from "../dao/short_url.dao";
-import { UnauthorizedError, NotFoundError } from "../utils/errorHandler";
-import wrapAsync from "../utils/tryCatchWrapper";
+} from "../services/short_url.service.js";
+import { getShortUrl } from "../dao/short_url.dao.js";
+import { UnauthorizedError, NotFoundError } from "../utils/errorHandler.js";
+import wrapAsync from "../utils/tryCatchWrapper.js";
 
 export const createShortUrl = wrapAsync(async (c: Context) => {
   const data = await c.req.json();

@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import { saveShortUrl, getCustomShortUrl, getUserStats, findUserShortUrls, countUserShortUrls, findUserLinkById, findTopUserLinks, deleteUserShortUrl, } from "../dao/short_url.dao";
-import urlSchema from "../models/shorturl.model";
-import { generateNanoid } from "../utils/helper";
-import { ConflictError, BadRequestError, NotFoundError, InternalServerError, } from "../utils/errorHandler";
+import { saveShortUrl, getCustomShortUrl, getUserStats, findUserShortUrls, countUserShortUrls, findUserLinkById, findTopUserLinks, deleteUserShortUrl, } from "../dao/short_url.dao.js";
+import urlSchema from "../models/shorturl.model.js";
+import { generateNanoid } from "../utils/helper.js";
+import { ConflictError, BadRequestError, NotFoundError, InternalServerError, } from "../utils/errorHandler.js";
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;

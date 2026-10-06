@@ -6,7 +6,7 @@ import {
   getUserTopLinks,
   getUserLinkAnalytics,
   deleteUserLink,
-} from "../controller/short_url.controller";
+} from "../controller/short_url.controller.js";
 
 const url_routes = new Hono();
 

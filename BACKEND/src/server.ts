@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
-import app from "./app";
-import connectDB from "./config/mongo.config";
+import app from "./app.js";
+import connectDB from "./config/mongo.config.js";
 
 const start = async () => {
   await connectDB();

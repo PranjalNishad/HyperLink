@@ -1,8 +1,8 @@
 import { setCookie, getCookie } from "hono/cookie";
-import wrapAsync from "../utils/tryCatchWrapper";
-import { registerUser, loginUser, refreshSession, logoutSession, } from "../services/auth.service";
-import { ACCESS_COOKIE, REFRESH_COOKIE, accessCookieOptions, refreshCookieOptions, } from "../config/config";
-import { BadRequestError } from "../utils/errorHandler";
+import wrapAsync from "../utils/tryCatchWrapper.js";
+import { registerUser, loginUser, refreshSession, logoutSession, } from "../services/auth.service.js";
+import { ACCESS_COOKIE, REFRESH_COOKIE, accessCookieOptions, refreshCookieOptions, } from "../config/config.js";
+import { BadRequestError } from "../utils/errorHandler.js";
 const setAuthCookies = (c, accessToken, refreshToken) => {
     setCookie(c, ACCESS_COOKIE, accessToken, accessCookieOptions);
     setCookie(c, REFRESH_COOKIE, refreshToken, refreshCookieOptions);

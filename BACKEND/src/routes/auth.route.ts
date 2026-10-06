@@ -4,8 +4,8 @@ import {
   login_user,
   logout_user,
   refresh_user,
-} from "../controller/auth.controller";
-import { rateLimit } from "../middleware/rateLimit.middleware";
+} from "../controller/auth.controller.js";
+import { rateLimit } from "../middleware/rateLimit.middleware.js";
 
 const auth_routes = new Hono();
 

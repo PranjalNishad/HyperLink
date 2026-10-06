@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { getUserStats, getUserUrls, getUserAnalytics, getUserTopLinks, getUserLinkAnalytics, deleteUserLink, } from "../controller/short_url.controller";
+import { getUserStats, getUserUrls, getUserAnalytics, getUserTopLinks, getUserLinkAnalytics, deleteUserLink, } from "../controller/short_url.controller.js";
 const url_routes = new Hono();
 // Static paths must be registered before the "/:id" param route.
 url_routes.get("/stats", getUserStats);

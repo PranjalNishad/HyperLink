@@ -1,14 +1,14 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import short_url from "./routes/short_url.route";
-import url_routes from "./routes/url.route";
-import auth_routes from "./routes/auth.route";
-import { redirectFromShortUrl } from "./controller/short_url.controller";
-import { errorHandler } from "./utils/errorHandler";
-import { attachUser } from "./utils/attactUser";
-import { allowedOrigins } from "./config/config";
-import connectDB from "./config/mongo.config";
-import { rateLimit } from "./middleware/rateLimit.middleware";
+import short_url from "./routes/short_url.route.js";
+import url_routes from "./routes/url.route.js";
+import auth_routes from "./routes/auth.route.js";
+import { redirectFromShortUrl } from "./controller/short_url.controller.js";
+import { errorHandler } from "./utils/errorHandler.js";
+import { attachUser } from "./utils/attactUser.js";
+import { allowedOrigins } from "./config/config.js";
+import connectDB from "./config/mongo.config.js";
+import { rateLimit } from "./middleware/rateLimit.middleware.js";
 
 const app = new Hono();
 
