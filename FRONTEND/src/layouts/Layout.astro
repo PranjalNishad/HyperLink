@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Analytics from "@vercel/analytics/astro";
 import CosmicBackground from "@/components/cosmic/CosmicBackground.astro";
 
 interface Props {
@@ -48,6 +49,8 @@ const {
         }
       })();
     </script>
+
+    <Analytics />
   </head>
 
   <body class="min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)]">
