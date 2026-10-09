@@ -563,13 +563,13 @@ optgroup {
    ========================================================= */
 
 .container-page {
-  width: min(100% - 3rem, 1200px);
+  width: min(100% - 3rem, 1280px);
   margin-inline: auto;
 }
 
 @media (max-width: 640px) {
   .container-page {
-    width: min(100% - 2rem, 1200px);
+    width: min(100% - 2rem, 1280px);
   }
 }
 
