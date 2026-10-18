@@ -83,6 +83,7 @@ HyperLink/
 │   │   ├── types/       # Shared TypeScript types
 │   │   └── utils/       # Auth-state probe, helpers
 │   ├── astro.config.mjs
+│   ├── vercel.json      # Rewrite: short-code paths -> backend redirect handler
 │   └── package.json
 ├── BACKEND/             # Hono backend (separate Vercel project)
 │   ├── src/
@@ -189,7 +190,7 @@ PUBLIC_API_BASE_URL=http://localhost:3000
 | `CORS_ORIGIN` | Comma-separated list of origins allowed to make credentialed requests. |
 | `NODE_ENV` | Set to `production` in production (enables secure cookies, HSTS, and generic error messages). |
 | `APP_URL` | Fallback public base URL for the returned short links, used when `PUBLIC_SHORT_URL_BASE` is not set (no trailing slash required). |
-| `PUBLIC_SHORT_URL_BASE` | Optional. Public base URL used to build the returned short links. Must be a host that serves the backend's `/:slug` redirect route. Defaults to `APP_URL`. |
+| `PUBLIC_SHORT_URL_BASE` | Optional. Public base URL used to build the returned short links. Must be a host whose single-segment paths reach the backend's `/:slug` redirect route — in this deployment the frontend domain, which forwards slug paths to the backend (see [Deployment](#deployment)). Defaults to `APP_URL`. |
 
 ```bash
 MONGO_URL=your_mongodb_connection_string
@@ -284,7 +285,8 @@ The repository is deployed as **two separate Vercel projects** created from the 
 
 - Both applications live in one repository but deploy independently, so each can be updated without redeploying the other.
 - The backend reads its configuration entirely from environment variables (`MONGO_URL`, `JWT_SECRET`, `CORS_ORIGIN`, `NODE_ENV`, `APP_URL`, `PUBLIC_SHORT_URL_BASE`).
-- The short-link redirect (`GET /:slug`) is served by the backend, so a branded short-link domain must be attached to the **backend** project. Set `PUBLIC_SHORT_URL_BASE` to that domain so newly generated links use it; existing links keep resolving on any host that serves `/:slug`.
+- Short links are generated on the public base URL from `PUBLIC_SHORT_URL_BASE` (the frontend domain in production) and resolve through a single redirect implementation in the backend. The frontend's `vercel.json` holds one rewrite that forwards slug-shaped single-segment paths to the backend's `GET /:slug` handler; because Vercel resolves filesystem routes before rewrites, the frontend pages and assets are served directly and only unknown slug paths are forwarded. Query parameters are preserved.
+- Only the slug is persisted per link, so changing `PUBLIC_SHORT_URL_BASE` changes how new links are built without affecting existing codes — they keep resolving on any host that reaches `/:slug`.
 - The backend uses Vercel's built-in Hono support and does not rely on a committed `vercel.json`.
 - Production domains, secrets, and connection strings are configured in the hosting provider's settings and are intentionally not stored in the repository.
 
@@ -319,7 +321,7 @@ The following are **not implemented** and are listed only as potential enhanceme
 - Profile editing (name/email) and account deletion.
 - Click-event history to enable time-series charts.
 - Device, referrer, and geographic analytics; unique-visitor tracking.
-- Custom/branded short-link domains: the returned short-link base is configurable (`PUBLIC_SHORT_URL_BASE`), but no custom domain is attached to the backend deployment yet.
+- Custom/branded short-link domains: links are served on the frontend domain, which forwards them to the backend; a custom domain would mean attaching it to the frontend project and pointing `PUBLIC_SHORT_URL_BASE` at it.
 - A shared rate-limit store (e.g. Redis) for multi-instance deployments.
 
 ---
