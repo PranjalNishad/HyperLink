@@ -187,7 +187,7 @@ PUBLIC_API_BASE_URL=http://localhost:3000
 | --- | --- |
 | `MONGO_URL` | MongoDB Atlas connection string. |
 | `JWT_SECRET` | Secret used to sign and verify access tokens. |
-| `CORS_ORIGIN` | Comma-separated list of origins allowed to make credentialed requests. |
+| `CORS_ORIGIN` | Comma-separated list of origins allowed to make credentialed requests; each entry must match the browser's `Origin` exactly, scheme included. Production must list every frontend origin it is served from (custom domain and any still-used `vercel.app` URL) — an unset value falls back to `http://localhost:4321` and an empty value allows no origins. Changing it requires a redeploy. |
 | `NODE_ENV` | Set to `production` in production (enables secure cookies, HSTS, and generic error messages). |
 | `APP_URL` | Fallback public base URL for the returned short links, used when `PUBLIC_SHORT_URL_BASE` is not set (no trailing slash required). |
 | `PUBLIC_SHORT_URL_BASE` | Optional. Public base URL used to build the returned short links. Must be a host whose single-segment paths reach the backend's `/:slug` redirect route — in this deployment the frontend domain, which forwards slug paths to the backend (see [Deployment](#deployment)). Defaults to `APP_URL`. |
