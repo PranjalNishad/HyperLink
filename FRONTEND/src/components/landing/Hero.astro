@@ -35,13 +35,13 @@ import Button from "@/components/common/Button.astro";
       </p>
 
       <div class="mt-9 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:justify-center lg:justify-start">
-        <Button variant="primary" size="xl" class="w-full sm:w-auto">
-          <a href="/signup" data-auth-href class="inline-flex items-center gap-2 text-inherit no-underline">
+        <Button href="/signup" data-auth-href variant="primary" size="xl" class="w-full sm:w-auto">
+          <span class="inline-flex items-center gap-2">
             Get Started Free
             <svg viewBox="0 0 16 16" class="h-[1.1em] w-[1.1em]" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" />
             </svg>
-          </a>
+          </span>
         </Button>
         <Button variant="secondary" size="xl" class="w-full sm:w-auto">
           <a href="#features" class="text-inherit no-underline">Learn More</a>

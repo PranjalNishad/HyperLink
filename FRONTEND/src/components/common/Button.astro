@@ -14,6 +14,8 @@ interface Props {
   fullWidth?: boolean;
   /** Extra classes merged onto the button element. */
   class?: string;
+  /** Renders a link instead of a button, keeping the same styling. */
+  href?: string;
   /** The button's label. Use the slot for rich content. */
   "aria-label"?: string;
   /** Allows arbitrary native <button> attributes. */
@@ -28,8 +30,23 @@ const {
   loading = false,
   fullWidth = false,
   class: className = "",
+  href,
   ...attrs
 } = Astro.props;
+
+// Navigation belongs on a real link: an interactive element must never be
+// nested inside another one (a <button> wrapping an <a> only exposes the
+// anchor's own box as clickable and adds an inert keyboard tab stop).
+const Tag = href ? "a" : "button";
+
+const tagAttrs = href
+  ? { href }
+  : {
+      type,
+      disabled: disabled || loading,
+      "aria-disabled": disabled || loading || undefined,
+      "aria-busy": loading || undefined,
+    };
 
 const variantClasses: Record<string, string> = {
   primary: [
@@ -98,12 +115,9 @@ const baseClasses = [
 ].join(" ");
 ---
 
-<button
-  type={type}
-  disabled={disabled || loading}
-  aria-disabled={disabled || loading || undefined}
-  aria-busy={loading || undefined}
-  class:list={[baseClasses, variantClasses[variant], sizeClasses[size], fullWidth && "w-full", className]}
+<Tag
+  class:list={[baseClasses, variantClasses[variant], sizeClasses[size], fullWidth && "w-full", href && "btn-link no-underline", className]}
+  {...tagAttrs}
   {...attrs}
 >
   {
@@ -114,9 +128,19 @@ const baseClasses = [
     )
   }
   <slot />
-</button>
+</Tag>
 
 <style>
+  /*
+   * The <button> variant is normalised by the form-element reset
+   * (`button { font: inherit }`) that ships with the global stylesheet, and that
+   * unlayered reset wins over the layered text-* / font-* utility classes. Mirror
+   * it on the link variant so identical props render identically either way.
+   */
+  .btn-link {
+    font: inherit;
+  }
+
   .btn-spinner {
     display: inline-block;
     width: 1em;

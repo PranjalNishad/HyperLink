@@ -8,12 +8,17 @@
  *
  * Call `initAuthState()` once per page. It runs at most once and never touches
  * the httpOnly cookie — it only reflects the session via the existing probe.
+ *
+ * The probe is asynchronous, so a click may happen before it resolves. The CTAs
+ * keep plain `<a href>` behaviour and navigate immediately: blocking the click
+ * to await the probe turns a tap into a network round-trip and swallows the
+ * navigation whenever that request is slow, cold, or never completes. Signed-in
+ * visitors who reach /signup that way are forwarded to the dashboard there.
  */
 
 import { isAuthenticated } from "@/api/auth.api";
 
 let started = false;
-let resolved: boolean | null = null;
 
 export function initAuthState(): void {
   if (started) return;
@@ -24,8 +29,6 @@ export function initAuthState(): void {
   const ctaEls = document.querySelectorAll<HTMLAnchorElement>("[data-auth-href]");
 
   function apply(authed: boolean) {
-    resolved = authed;
-
     guestEls.forEach((el) => {
       el.style.display = authed ? "none" : "";
     });
@@ -44,20 +47,4 @@ export function initAuthState(): void {
   isAuthenticated()
     .then(apply)
     .catch(() => apply(false));
-
-  // If a CTA is clicked before the probe resolves, don't send a signed-in user
-  // to /signup — resolve first, then navigate.
-  document.addEventListener("click", (event) => {
-    const el = (event.target as HTMLElement).closest<HTMLAnchorElement>("[data-auth-href]");
-    if (!el || resolved !== null) return;
-
-    event.preventDefault();
-    isAuthenticated()
-      .then((authed) => {
-        window.location.href = authed ? "/dashboard" : "/signup";
-      })
-      .catch(() => {
-        window.location.href = "/signup";
-      });
-  });
 }

@@ -50,3 +50,14 @@ import ThemeToggle from "@/components/common/ThemeToggle.astro";
     </div>
   </main>
 </Layout>
+
+<script>
+  import { isAuthenticated } from "@/api/auth.api";
+
+  // The landing "Get Started" CTAs navigate immediately instead of waiting for
+  // the async auth probe, so a signed-in visitor is forwarded to the dashboard
+  // here rather than being shown a second registration form.
+  isAuthenticated().then((authed) => {
+    if (authed) window.location.replace("/dashboard");
+  });
+</script>

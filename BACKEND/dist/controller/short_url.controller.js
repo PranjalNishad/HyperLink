@@ -1,5 +1,6 @@
 import { createShortUrlWithUser, createShortUrlWithoutUser, getDashboardStats, getUserShortUrls, getAnalyticsOverview, getTopLinks, getLinkAnalytics, removeUserLink, } from "../services/short_url.service.js";
 import { getShortUrl } from "../dao/short_url.dao.js";
+import { shortUrlBaseUrl } from "../config/config.js";
 import { UnauthorizedError, NotFoundError } from "../utils/errorHandler.js";
 import wrapAsync from "../utils/tryCatchWrapper.js";
 export const createShortUrl = wrapAsync(async (c) => {
@@ -13,7 +14,7 @@ export const createShortUrl = wrapAsync(async (c) => {
         shortUrl = await createShortUrlWithoutUser(data.url, null, data.slug);
     }
     c.status(200);
-    return c.text(`${(process.env.APP_URL ?? "").replace(/\/+$/, "")}/${shortUrl}`);
+    return c.text(`${shortUrlBaseUrl}/${shortUrl}`);
 });
 export const redirectFromShortUrl = wrapAsync(async (c) => {
     const { id } = c.req.param();

@@ -10,6 +10,7 @@ import {
   deleteUserShortUrl,
 } from "../dao/short_url.dao.js";
 import urlSchema from "../models/shorturl.model.js";
+import { shortUrlBaseUrl } from "../config/config.js";
 import { generateNanoid } from "../utils/helper.js";
 import {
   ConflictError,
@@ -109,7 +110,7 @@ const mapShortUrl = (doc: ShortUrlLean) => ({
   id: String(doc._id),
   destination: doc.full_url,
   slug: doc.short_url,
-  shortUrl: `${(process.env.APP_URL ?? "").replace(/\/+$/, "")}/${doc.short_url}`,
+  shortUrl: `${shortUrlBaseUrl}/${doc.short_url}`,
   clicks: doc.clicks ?? 0,
   createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : null,
 });

@@ -34,3 +34,16 @@ export const allowedOrigins = (process.env.CORS_ORIGIN ?? "http://localhost:4321
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);
+/**
+ * Public base URL used to build every short link returned to clients — the
+ * plain-text body of `POST /api/create` and the `shortUrl` field of the link
+ * and analytics payloads.
+ *
+ * Set `PUBLIC_SHORT_URL_BASE` to the public short-link domain when one is
+ * configured; until then it falls back to `APP_URL`, which is the host that
+ * currently serves the redirect route. Trailing slashes are stripped so the
+ * value produces the same URL with or without one.
+ */
+export const shortUrlBaseUrl = (process.env.PUBLIC_SHORT_URL_BASE ||
+    process.env.APP_URL ||
+    "").replace(/\/+$/, "");

@@ -188,7 +188,8 @@ PUBLIC_API_BASE_URL=http://localhost:3000
 | `JWT_SECRET` | Secret used to sign and verify access tokens. |
 | `CORS_ORIGIN` | Comma-separated list of origins allowed to make credentialed requests. |
 | `NODE_ENV` | Set to `production` in production (enables secure cookies, HSTS, and generic error messages). |
-| `APP_URL` | Public base URL of the backend, used to build the returned short links (no trailing slash required). |
+| `APP_URL` | Fallback public base URL for the returned short links, used when `PUBLIC_SHORT_URL_BASE` is not set (no trailing slash required). |
+| `PUBLIC_SHORT_URL_BASE` | Optional. Public base URL used to build the returned short links. Must be a host that serves the backend's `/:slug` redirect route. Defaults to `APP_URL`. |
 
 ```bash
 MONGO_URL=your_mongodb_connection_string
@@ -196,6 +197,8 @@ JWT_SECRET=your_jwt_secret
 CORS_ORIGIN=http://localhost:4321
 NODE_ENV=development
 APP_URL=http://localhost:3000
+# optional — omit to keep using APP_URL as the short-link base
+PUBLIC_SHORT_URL_BASE=http://localhost:3000
 ```
 
 ---
@@ -280,7 +283,8 @@ The repository is deployed as **two separate Vercel projects** created from the 
 | Backend | `BACKEND` | Vercel Function | Hono application on the Node.js runtime; connects to MongoDB Atlas. |
 
 - Both applications live in one repository but deploy independently, so each can be updated without redeploying the other.
-- The backend reads its configuration entirely from environment variables (`MONGO_URL`, `JWT_SECRET`, `CORS_ORIGIN`, `NODE_ENV`, `APP_URL`).
+- The backend reads its configuration entirely from environment variables (`MONGO_URL`, `JWT_SECRET`, `CORS_ORIGIN`, `NODE_ENV`, `APP_URL`, `PUBLIC_SHORT_URL_BASE`).
+- The short-link redirect (`GET /:slug`) is served by the backend, so a branded short-link domain must be attached to the **backend** project. Set `PUBLIC_SHORT_URL_BASE` to that domain so newly generated links use it; existing links keep resolving on any host that serves `/:slug`.
 - The backend uses Vercel's built-in Hono support and does not rely on a committed `vercel.json`.
 - Production domains, secrets, and connection strings are configured in the hosting provider's settings and are intentionally not stored in the repository.
 
@@ -315,7 +319,7 @@ The following are **not implemented** and are listed only as potential enhanceme
 - Profile editing (name/email) and account deletion.
 - Click-event history to enable time-series charts.
 - Device, referrer, and geographic analytics; unique-visitor tracking.
-- Custom/branded domains.
+- Custom/branded short-link domains: the returned short-link base is configurable (`PUBLIC_SHORT_URL_BASE`), but no custom domain is attached to the backend deployment yet.
 - A shared rate-limit store (e.g. Redis) for multi-instance deployments.
 
 ---

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { saveShortUrl, getCustomShortUrl, getUserStats, findUserShortUrls, countUserShortUrls, findUserLinkById, findTopUserLinks, deleteUserShortUrl, } from "../dao/short_url.dao.js";
 import urlSchema from "../models/shorturl.model.js";
+import { shortUrlBaseUrl } from "../config/config.js";
 import { generateNanoid } from "../utils/helper.js";
 import { ConflictError, BadRequestError, NotFoundError, InternalServerError, } from "../utils/errorHandler.js";
 const DEFAULT_PAGE = 1;
@@ -68,7 +69,7 @@ const mapShortUrl = (doc) => ({
     id: String(doc._id),
     destination: doc.full_url,
     slug: doc.short_url,
-    shortUrl: `${(process.env.APP_URL ?? "").replace(/\/+$/, "")}/${doc.short_url}`,
+    shortUrl: `${shortUrlBaseUrl}/${doc.short_url}`,
     clicks: doc.clicks ?? 0,
     createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : null,
 });
