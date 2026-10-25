@@ -1,0 +1,68 @@
+---
+// Tokokino's closing section: flat background with soft radial light and
+// mono ornaments — no card, no gradient panel.
+const ornaments = [
+  {
+    className: "left-[4%] top-[12%]",
+    text: ["   +", "  +++", " +++++", "  +++", "   +"].join("\n"),
+  },
+  {
+    className: "right-[7%] top-[16%] hidden sm:block",
+    text: [">_  >_", "  >_", ">_  >_"].join("\n"),
+  },
+];
+---
+
+<section class="relative overflow-hidden px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-32">
+  <div
+    aria-hidden="true"
+    class="absolute inset-0 opacity-65"
+    style="background: radial-gradient(circle at 50% 42%, color-mix(in oklch, var(--color-foreground) 7%, transparent), transparent 36%), radial-gradient(circle at 18% 78%, color-mix(in oklch, var(--color-foreground) 5%, transparent), transparent 26%);"
+  >
+  </div>
+
+  {
+    ornaments.map((ornament) => (
+      <pre
+        aria-hidden="true"
+        class={`pointer-events-none absolute select-none font-mono text-[9px] leading-[0.82] font-bold tracking-[-0.08em] text-[var(--color-text-muted)] opacity-40 sm:text-[11px] md:text-[13px] ${ornament.className}`}
+      >
+        {ornament.text}
+      </pre>
+    ))
+  }
+
+  <div class="relative mx-auto flex max-w-5xl flex-col items-center text-center">
+    <span class="home-eyebrow">// Last call</span>
+
+    <h2 class="m-0 mt-5 text-[1.65rem] leading-[1.05] font-medium tracking-[-0.04em] text-balance text-[var(--color-text-primary)] sm:text-4xl lg:text-[3.75rem]">
+      Short links and clicks
+      <br />
+      <span class="text-[var(--color-primary)]">that actually add up.</span>
+    </h2>
+
+    <p class="m-0 mt-6 max-w-xl text-[14px] leading-relaxed text-balance text-[var(--color-text-muted)] sm:text-[15px]">
+      Create short links with custom slugs, share them anywhere, and see cumulative
+      clicks accumulate for every link you own.
+    </p>
+
+    <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
+      <a
+        href="/signup"
+        data-auth-href
+        class="group inline-flex items-center gap-2 rounded-md bg-[image:var(--gradient-primary)] px-5 py-2.5 text-sm font-medium text-[var(--btn-text)] transition hover:brightness-105 focus-brand"
+      >
+        Get Started Free
+        <svg viewBox="0 0 24 24" class="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </a>
+      <a
+        href="#hero"
+        class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--frame-fill)] px-5 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] backdrop-blur-sm transition-colors hover:border-[var(--color-border-hover)] hover:text-[var(--color-text-primary)] focus-brand"
+      >
+        Shorten a link
+      </a>
+    </div>
+  </div>
+</section>

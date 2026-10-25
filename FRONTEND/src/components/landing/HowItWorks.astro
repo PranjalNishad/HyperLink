@@ -1,0 +1,66 @@
+---
+const steps = [
+  {
+    title: "Paste Your URL",
+    description: "Drop any long link into the shortener — no account needed.",
+  },
+  {
+    title: "Get Your Short Link",
+    description: "HyperLink returns a compact link, or your own custom slug.",
+  },
+  {
+    title: "Share & Track",
+    description: "Share it anywhere and watch cumulative clicks accumulate.",
+  },
+];
+---
+
+<section id="how-it-works" class="relative scroll-mt-24">
+  <div class="container-wide home-rails home-section px-4 sm:px-6 lg:px-10">
+    <div class="mx-auto max-w-2xl text-center">
+      <span class="home-eyebrow">// How it works</span>
+      <h2 class="home-heading mt-3">
+        From long to short in <span class="text-[var(--color-primary)]">seconds</span>
+      </h2>
+      <p class="mt-3 text-sm leading-relaxed text-[var(--color-text-muted)]">
+        A simple three-step flow that powers every short link.
+      </p>
+    </div>
+
+    <ol class="relative mt-12 grid list-none gap-10 p-0 sm:grid-cols-3 sm:gap-6">
+      <!-- Thin dashed connector -->
+      <div
+        class="absolute left-[16%] right-[16%] top-[1.15rem] hidden h-px sm:block"
+        style="background-image: repeating-linear-gradient(to right, var(--home-rail) 0 6px, transparent 6px 14px);"
+        aria-hidden="true"
+      >
+      </div>
+
+      {
+        steps.map((step, index) => (
+          <li
+            class="home-reveal relative flex flex-col items-center text-center"
+            style={`--reveal-i: ${index}`}
+          >
+            <div class="relative z-10 flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--frame-fill-inner)] px-3 py-1.5 backdrop-blur-sm">
+              <span
+                class="block size-2 bg-[var(--color-primary)] shadow-[0_0_0_5px_rgba(255,48,48,0.12)]"
+                aria-hidden="true"
+              />
+              <span class="font-mono text-[10px] tracking-[0.16em] text-[var(--color-primary)] uppercase">
+                0{index + 1}
+              </span>
+            </div>
+
+            <h3 class="mt-5 m-0 text-[15px] font-medium tracking-tight text-[var(--color-text-primary)]">
+              {step.title}
+            </h3>
+            <p class="mx-auto mt-2 max-w-[17rem] text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+              {step.description}
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

@@ -1,0 +1,12 @@
+---
+interface Props {
+  /** Extra classes for spacing. */
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div class:list={["relative w-full", className]} aria-hidden="true">
+  <div class="home-rule"></div>
+</div>

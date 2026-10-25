@@ -50,10 +50,9 @@ const tagAttrs = href
 
 const variantClasses: Record<string, string> = {
   primary: [
-    "text-[#0b0b10]",
+    "text-[var(--btn-text)]",
     "bg-[image:var(--gradient-primary)]",
-    "shadow-[0_2px_20px_rgba(255,138,101,0.15)]",
-    "hover:shadow-[0_6px_28px_rgba(255,138,101,0.28)]",
+    "btn-glow",
     "hover:brightness-105",
   ].join(" "),
   secondary: [

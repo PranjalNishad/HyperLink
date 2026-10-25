@@ -2,46 +2,39 @@
 import Layout from "@/layouts/Layout.astro";
 import NavBar from "@/components/layout/NavBar.astro";
 import Footer from "@/components/layout/Footer.astro";
-import Hero from "@/components/landing/Hero.astro";
-import UrlShortener from "@/components/landing/UrlShortener.astro";
+import { HeroSocialApp } from "@/components/hero-social-app";
+import DashedRule from "@/components/landing/DashedRule.astro";
+import TrustStrip from "@/components/landing/TrustStrip.astro";
 import Features from "@/components/landing/Features.astro";
-import Architecture from "@/components/landing/Architecture.astro";
-import Button from "@/components/common/Button.astro";
+import HowItWorks from "@/components/landing/HowItWorks.astro";
+import AnalyticsPreview from "@/components/landing/AnalyticsPreview.astro";
+import FinalCta from "@/components/landing/FinalCta.astro";
 ---
 
 <Layout
   title="HyperLink — Short Links. Big Possibilities."
   description="Create short, powerful links with HyperLink."
   stars={22}
+  home
 >
-  <div class="relative flex min-h-screen flex-col overflow-x-clip">
-    <NavBar />
+  <div class="relative mx-auto flex min-h-screen max-w-[1800px] flex-col overflow-x-clip">
+    <div class="home-atmosphere" aria-hidden="true"></div>
 
-    <main class="relative flex-1">
-      <Hero>
-        <UrlShortener />
-      </Hero>
+    <NavBar />
+    <DashedRule />
+
+    <main class="relative z-10 flex-1">
+      <HeroSocialApp client:load />
+
+      <TrustStrip />
 
       <Features />
-      <Architecture />
-
-      <!-- Final CTA -->
-      <section class="relative overflow-hidden py-20 md:py-28">
-        <div class="container-page relative text-center">
-          <div class="mx-auto max-w-2xl rounded-[2rem] border border-[var(--glass-border)] bg-[var(--glass-panel)] px-6 py-12 shadow-[var(--shadow-lg)] backdrop-blur-2xl">
-            <h2 class="m-0 text-2xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-3xl md:text-4xl">
-              Ready to shorten the way you share?
-            </h2>
-            <p class="mx-auto mt-3 max-w-md text-base leading-relaxed text-[var(--color-text-muted)]">
-              Create your first short link with HyperLink.
-            </p>
-
-            <div class="mt-8 flex justify-center">
-              <Button href="/signup" data-auth-href variant="primary" size="lg">Get Started</Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <DashedRule />
+      <HowItWorks />
+      <DashedRule />
+      <AnalyticsPreview />
+      <DashedRule />
+      <FinalCta />
     </main>
 
     <Footer />

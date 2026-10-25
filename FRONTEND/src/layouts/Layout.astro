@@ -8,17 +8,20 @@ interface Props {
   description?: string;
   /** Decorative star count for the cosmic backdrop. */
   stars?: number;
+  /** Applies the homepage palette, rails and dot-grid backdrop. */
+  home?: boolean;
 }
 
 const {
   title = "HyperLink — Short Links. Big Possibilities.",
   description = "Create short, powerful links with HyperLink.",
   stars = 18,
+  home = false,
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-home={home ? "" : undefined}>
   <head>
     <meta charset="UTF-8" />
 
@@ -28,7 +31,10 @@ const {
     />
 
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#080a12" />
+    <meta
+      name="theme-color"
+      content="#0f0f0f"
+    />
 
     <title>{title}</title>
 

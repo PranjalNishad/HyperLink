@@ -1,0 +1,27 @@
+---
+// Real, verifiable stack markers only — no fabricated companies or testimonials.
+const stack = ["Astro", "Tailwind CSS", "Hono", "Bun", "MongoDB Atlas", "Vercel"];
+---
+
+<section aria-label="Technology stack" class="relative">
+  <div class="home-rule"></div>
+
+  <div class="container-wide flex flex-col items-center gap-4 py-5 text-center sm:flex-row sm:justify-between sm:text-left">
+    <p class="home-eyebrow m-0">// Built on a modern stack</p>
+
+    <ul class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[10px] tracking-[0.16em] text-[var(--color-text-muted)] uppercase">
+      {
+        stack.map((item, index) => (
+          <li class="flex items-center gap-5">
+            {index > 0 && (
+              <span class="h-1 w-1 bg-[var(--color-border)]" aria-hidden="true" />
+            )}
+            <span>{item}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="home-rule"></div>
+</section>

@@ -1,85 +1,90 @@
 ---
 const features = [
   {
-    title: "URL Shortening",
-    description: "Convert long URLs into short, clean links that are easy to share.",
-    icon: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72" />',
+    title: "Lightning Fast",
+    description:
+      "Create a short link in one request — no page reloads, no waiting around.",
+    icon: '<path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z" />',
   },
   {
-    title: "Custom URLs",
-    description: "Create branded or custom short links with your own memorable slugs.",
-    icon: '<path d="m9.5 14.5 5-5" /><path d="M8 12.5 5.5 15a3 3 0 0 0 4.2 4.2L12 16.7" /><path d="M16 11.5 18.5 9a3 3 0 0 0-4.2-4.2L12 7.3" />',
-  },
-  {
-    id: "analytics",
-    title: "Analytics",
-    description: "Track total clicks and link performance with cumulative analytics.",
+    title: "Detailed Analytics",
+    description:
+      "Track cumulative clicks per link and see which links perform best.",
     icon: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />',
   },
   {
-    title: "Redirects",
-    description: "Fast and secure redirection from short links to destination URLs.",
-    icon: '<path d="M5 12h14M13 6l6 6-6 6" />',
+    title: "Custom Links",
+    description:
+      "Choose a memorable slug instead of a random one, or let HyperLink generate it.",
+    icon: '<path d="m9.5 14.5 5-5" /><path d="M8 12.5 5.5 15a3 3 0 0 0 4.2 4.2L12 16.7" /><path d="M16 11.5 18.5 9a3 3 0 0 0-4.2-4.2L12 7.3" />',
   },
   {
-    title: "User Sign In / Sign Up",
-    description: "Save and manage your links with a personal HyperLink account.",
-    icon: '<circle cx="12" cy="8" r="4" /><path d="M5 20c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" />',
-  },
-  {
-    title: "Beautiful & Simple UI",
-    description: "Clean, modern, and minimal design focused on what matters.",
-    icon: '<path d="M12 2 2 7l10 5 10-5-10-5Z" /><path d="m2 17 10 5 10-5" /><path d="M2 12 12 17l10-5" />',
+    title: "Secure & Private",
+    description:
+      "bcrypt-hashed passwords, HttpOnly cookie sessions, rate-limited endpoints and per-account link ownership.",
+    icon: '<path d="M12 3 5 6v5.5c0 4.2 2.8 7.6 7 9.5 4.2-1.9 7-5.3 7-9.5V6l-7-3Z" /><path d="m9 11.5 2 2 4-4" />',
   },
 ];
 ---
 
-<section class="container-page py-20 md:py-28" id="features">
-  <div class="mx-auto max-w-2xl text-center">
-    <span class="text-xs font-semibold uppercase tracking-widest text-[var(--color-primary)]">Features</span>
-    <h2 class="mt-3 m-0 text-3xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-4xl">
-      Everything you need for <span class="gradient-text">better links</span>
-    </h2>
-    <p class="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[var(--color-text-muted)]">
-      Simple tools for creating, managing, and understanding every link you share.
-    </p>
-  </div>
+<section id="features" class="relative scroll-mt-24">
+  <div class="container-wide home-rails home-section px-4 sm:px-6 lg:px-10">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div class="max-w-2xl">
+        <span class="home-eyebrow">// Features</span>
+        <h2 class="home-heading mt-3">
+          Everything you need for <span class="text-[var(--color-primary)]">better links</span>
+        </h2>
+        <p class="mt-3 text-sm leading-relaxed text-[var(--color-text-muted)]">
+          Simple tools for creating, managing and understanding every link you share.
+        </p>
+      </div>
 
-  <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-    {
-      features.map((feature) => (
-        <div
-          id={feature.id}
-          class:list={[
-            "group rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-panel)] p-5 backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--glass-border-hover)] hover:shadow-[var(--shadow-glow)]",
-            feature.id && "scroll-mt-24",
-          ]}
-        >
-          <div class="flex items-start gap-4">
-            <div class="icon-gradient group-hover:shadow-[0_0_24px_rgba(255,138,101,0.18)]">
-              <svg
-                viewBox="0 0 24 24"
-                class="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-                set:html={feature.icon}
-              />
+      <a
+        href="#how-it-works"
+        class="group inline-flex items-center gap-2 self-start rounded-md border border-[var(--color-border)] bg-[var(--frame-fill)] px-4 py-2 text-[13px] font-medium text-[var(--color-text-secondary)] backdrop-blur-sm transition-colors hover:border-[var(--color-border-hover)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)] md:self-auto"
+      >
+        See how it works
+        <svg viewBox="0 0 24 24" class="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </a>
+    </div>
+
+    <div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        features.map((feature, index) => (
+          <article
+            class="home-reveal frame-card group transition-colors hover:border-[var(--color-border-hover)]"
+            style={`--reveal-i: ${index}`}
+          >
+            <div class="frame-card-inner flex flex-col gap-4">
+              <span class="text-[var(--color-text-subtle)] transition-colors group-hover:text-[var(--color-primary)]">
+                <svg
+                  viewBox="0 0 24 24"
+                  class="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  set:html={feature.icon}
+                />
+              </span>
+
+              <div>
+                <h3 class="m-0 text-sm font-medium tracking-tight text-[var(--color-text-primary)]">
+                  {feature.title}
+                </h3>
+                <p class="mt-1.5 m-0 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+                  {feature.description}
+                </p>
+              </div>
             </div>
-            <div class="min-w-0">
-              <h3 class="m-0 text-base font-semibold tracking-tight text-[var(--color-text-primary)]">
-                {feature.title}
-              </h3>
-              <p class="mt-1 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
-                {feature.description}
-              </p>
-            </div>
-          </div>
-        </div>
-      ))
-    }
+          </article>
+        ))
+      }
+    </div>
   </div>
 </section>

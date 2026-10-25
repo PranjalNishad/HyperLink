@@ -1,0 +1,122 @@
+---
+// Supported product metrics only (total links, total clicks, links with
+// clicks). The figures are illustrative because the homepage is public.
+const stats = [
+  { label: "Total links", value: "12" },
+  { label: "Total clicks", value: "1,284" },
+  { label: "Links with clicks", value: "8" },
+];
+
+const chart = "M0 168 C 70 150, 110 96, 176 108 S 280 150, 344 110 S 448 40, 520 62 S 636 118, 700 74 S 780 34, 840 44";
+---
+
+<section id="analytics" class="relative scroll-mt-24">
+  <div class="container-wide home-rails home-section px-4 sm:px-6 lg:px-10">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div class="max-w-2xl">
+        <span class="home-eyebrow">// Analytics</span>
+        <h2 class="home-heading mt-3">
+          Know which links <span class="text-[var(--color-primary)]">actually work</span>
+        </h2>
+        <p class="mt-3 text-sm leading-relaxed text-[var(--color-text-muted)]">
+          Every short link accumulates clicks. Sign in to see totals, top links and
+          per-link performance for your own account.
+        </p>
+      </div>
+
+      <a
+        href="/dashboard"
+        data-auth-href
+        class="group inline-flex items-center gap-2 self-start rounded-md border border-[var(--color-border)] bg-[var(--frame-fill)] px-4 py-2 text-[13px] font-medium text-[var(--color-text-secondary)] backdrop-blur-sm transition-colors hover:border-[var(--color-border-hover)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)] md:self-auto"
+      >
+        Open your dashboard
+        <svg viewBox="0 0 24 24" class="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </a>
+    </div>
+
+    <div class="frame-card relative mt-10">
+      <div class="frame-card-inner relative overflow-hidden p-0">
+        <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+          <div class="home-dotgrid absolute inset-0 opacity-30"></div>
+          <div class="absolute -top-24 right-0 h-[22rem] w-[22rem] rounded-full bg-[radial-gradient(closest-side,rgba(255,48,48,0.16),transparent)] blur-2xl"></div>
+          <div class="absolute bottom-0 left-0 h-[18rem] w-[18rem] rounded-full bg-[radial-gradient(closest-side,rgba(168,85,247,0.1),transparent)] blur-2xl"></div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 p-5 sm:p-7">
+          <div>
+            <p class="m-0 font-mono text-[10px] tracking-[0.16em] text-[var(--color-text-subtle)] uppercase">
+              // Clicks over time
+            </p>
+            <p class="m-0 mt-1 text-sm text-[var(--color-text-muted)]">
+              Cumulative click activity across all links
+            </p>
+          </div>
+          <span class="rounded border border-[var(--color-border)] px-2 py-1 font-mono text-[9px] tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+            Illustrative preview
+          </span>
+        </div>
+
+        <div class="px-5 pb-5 sm:px-7">
+          <!-- Decorative chart preview -->
+          <svg
+            viewBox="0 0 840 200"
+            class="h-44 w-full sm:h-52"
+            fill="none"
+            role="img"
+            aria-label="Illustrative preview of click activity over time"
+          >
+            <defs>
+              <linearGradient id="analytics-area" x1="0" y1="0" x2="0" y2="200" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="var(--red-500)" stop-opacity="0.32" />
+                <stop offset="1" stop-color="var(--red-500)" stop-opacity="0" />
+              </linearGradient>
+              <linearGradient id="analytics-line" x1="0" y1="0" x2="840" y2="0" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="var(--red-400)" />
+                <stop offset="0.55" stop-color="var(--red-500)" />
+                <stop offset="1" stop-color="var(--purple-500)" />
+              </linearGradient>
+            </defs>
+
+            {[40, 80, 120, 160].map((y) => (
+              <line x1="0" y1={y} x2="840" y2={y} stroke="var(--color-border-soft)" stroke-width="1" />
+            ))}
+
+            <path d={`${chart} L 840 200 L 0 200 Z`} fill="url(#analytics-area)" />
+            <path d={chart} stroke="url(#analytics-line)" stroke-width="2" stroke-linecap="round" />
+            <circle cx="700" cy="74" r="3.5" fill="var(--red-500)" />
+            <circle cx="700" cy="74" r="9" fill="var(--red-500)" opacity="0.18" />
+          </svg>
+
+          <div class="mt-2 flex justify-between font-mono text-[9px] tracking-[0.14em] text-[var(--color-text-subtle)] uppercase">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+
+          <div class="mt-7 grid gap-3 sm:grid-cols-3">
+            {
+              stats.map((stat, index) => (
+                <div
+                  class="home-reveal rounded-md border border-[var(--color-border)] bg-[var(--frame-fill)] p-4"
+                  style={`--reveal-i: ${index}`}
+                >
+                  <p class="m-0 font-mono text-[9px] tracking-[0.14em] text-[var(--color-text-subtle)] uppercase">
+                    {stat.label}
+                  </p>
+                  <p class="m-0 mt-2 text-xl font-medium tracking-tight text-[var(--color-text-primary)]">
+                    {stat.value}
+                  </p>
+                </div>
+              ))
+            }
+          </div>
+
+          <p class="mt-5 m-0 text-[11px] leading-relaxed text-[var(--color-text-subtle)]">
+            Sample values for illustration — they are not account analytics. Sign in to
+            see your own cumulative totals.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

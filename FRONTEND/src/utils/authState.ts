@@ -19,6 +19,23 @@
 import { isAuthenticated } from "@/api/auth.api";
 
 let started = false;
+let resolved: boolean | null = null;
+const subscribers = new Set<(authed: boolean) => void>();
+
+/** The last probe result, or null while it is still unknown. */
+export function getAuthState(): boolean | null {
+  return resolved;
+}
+
+/**
+ * Subscribe to the shared probe result. Fires immediately when the state is
+ * already known, so components never need to issue a second probe of their own.
+ */
+export function subscribeAuthState(fn: (authed: boolean) => void): () => void {
+  subscribers.add(fn);
+  if (resolved !== null) fn(resolved);
+  return () => subscribers.delete(fn);
+}
 
 export function initAuthState(): void {
   if (started) return;
@@ -29,6 +46,8 @@ export function initAuthState(): void {
   const ctaEls = document.querySelectorAll<HTMLAnchorElement>("[data-auth-href]");
 
   function apply(authed: boolean) {
+    resolved = authed;
+
     guestEls.forEach((el) => {
       el.style.display = authed ? "none" : "";
     });
@@ -38,6 +57,8 @@ export function initAuthState(): void {
     ctaEls.forEach((el) => {
       el.setAttribute("href", authed ? "/dashboard" : "/signup");
     });
+
+    subscribers.forEach((fn) => fn(authed));
 
     window.dispatchEvent(
       new CustomEvent("nx:session-state", { detail: { authenticated: authed } }),
