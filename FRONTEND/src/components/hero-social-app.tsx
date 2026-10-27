@@ -104,7 +104,10 @@ export const HeroSocialApp = () => {
         <div className="home-reveal mx-auto flex w-full flex-col items-center gap-8 text-center">
           {/* Badge */}
           <a
-            href="#hero"
+            href="https://hyperlink.pranjalnishad.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Open hyperlink.pranjalnishad.in"
             className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-full border border-[var(--color-border)] bg-[var(--frame-fill)] px-3 py-1 font-mono text-[10px] tracking-[0.16em] uppercase backdrop-blur-sm transition-colors hover:border-[var(--color-border-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
           >
             <span className="block size-1.5 rounded-full bg-[var(--color-primary)]" aria-hidden="true" />
@@ -155,6 +158,12 @@ export const HeroSocialApp = () => {
             >
               Get Started Free
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+            </a>
+            <a
+              href="#shorten"
+              className="group inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--frame-fill)] px-5 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] backdrop-blur-sm transition-colors hover:border-[var(--color-border-hover)] hover:text-[var(--color-text-primary)] focus-brand"
+            >
+              Shorten a link
             </a>
             <a
               href="#features"
@@ -219,7 +228,7 @@ export const HeroSocialApp = () => {
                     }}
                   />
 
-                  <div className={`home-reveal frame-card relative z-10 w-full max-w-md text-left ${''}`} style={reveal(3)}>
+                  <div id="shorten" className="home-reveal frame-card relative z-10 w-full max-w-md scroll-mt-24 text-left" style={reveal(3)}>
                     <div className="frame-card-inner">
                       <p className="m-0 font-mono text-[10px] tracking-[0.16em] text-[var(--color-primary)] uppercase">
                         // Shorten
